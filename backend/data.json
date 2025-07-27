@@ -1,0 +1,103 @@
+{
+  "orders": [
+    {
+      "id": 1,
+      "basketNo": 1,
+      "customerName": "x",
+      "customerPhone": "1",
+      "customerAddress": "85 Great Portland Street",
+      "customerPostcode": "W1W 7LT",
+      "totalAmount": "10",
+      "status": "Delivered",
+      "deliveryNo": "D001",
+      "deliveryNotes": "",
+      "deliveredAt": "2025-07-27T15:38:50.238Z"
+    },
+    {
+      "id": 3,
+      "basketNo": 3,
+      "customerName": "rizan Rashid",
+      "customerPhone": " 01202 855771",
+      "customerAddress": "56",
+      "customerPostcode": "BH22 9HT",
+      "totalAmount": "100",
+      "status": "Pending",
+      "deliveryNo": "D003"
+    },
+    {
+      "id": 4,
+      "basketNo": 4,
+      "customerName": "ilker arslanoglu",
+      "customerPhone": "07805514472",
+      "customerAddress": "25 Headswell Crescent",
+      "customerPostcode": "BH10 6LF",
+      "totalAmount": "500",
+      "status": "Pending",
+      "deliveryNo": "D004"
+    },
+    {
+      "id": 5,
+      "basketNo": 5,
+      "customerName": "Serdar Akay",
+      "customerPhone": "1",
+      "customerAddress": "127d Above Bar S",
+      "customerPostcode": "SO14 7FN",
+      "totalAmount": "450",
+      "status": "Delivered",
+      "deliveryNo": "D005",
+      "deliveryNotes": "",
+      "deliveredAt": "2025-07-27T15:38:59.327Z"
+    }
+  ],
+  "customers": [
+    {
+      "id": 1,
+      "name": "rizan Rashid",
+      "shopName": "ebs",
+      "email": "x",
+      "phone": " 01202 855771",
+      "address": "56",
+      "city": "Ferndown",
+      "postalCode": "BH22 9HT",
+      "postcode": "B30 2PF"
+    },
+    {
+      "id": 2,
+      "name": "ilker arslanoglu",
+      "shopName": "ilker ",
+      "email": "ilker@lior.co.uk",
+      "phone": "07805514472",
+      "address": "25 Headswell Crescent",
+      "city": "BOURNEMOUTH",
+      "postalCode": "BH10 6LF",
+      "postcode": "BH10 6LF"
+    },
+    {
+      "id": 3,
+      "name": "arda payir",
+      "shopName": "ARda",
+      "email": "ilker@magiccosmetics.co.uk",
+      "phone": "07805514472",
+      "address": "unit 14",
+      "city": "Christchurch",
+      "postalCode": "BH23 3TQ",
+      "postcode": "BH23 3TQ"
+    },
+    {
+      "id": 4,
+      "name": "x",
+      "shopName": "1",
+      "phone": "1",
+      "address": "85 Great Portland Street",
+      "postcode": "W1W 7LT"
+    },
+    {
+      "id": 5,
+      "name": "Serdar Akay",
+      "shopName": "AK Grooming",
+      "phone": "1",
+      "address": "127d Above Bar S",
+      "postcode": "SO14 7FN"
+    }
+  ]
+}

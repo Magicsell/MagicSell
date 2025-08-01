@@ -1,6 +1,6 @@
-# MagicSell - PWA + Vercel Deployment
+# MagicRoute - PWA + Vercel Deployment
 
-MagicSell is a delivery management system with route optimization, mobile driver app, and PWA capabilities.
+MagicRoute is a delivery management system with route optimization, mobile driver app, and PWA capabilities.
 
 ## 🚀 Vercel Deployment
 

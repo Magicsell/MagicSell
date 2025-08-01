@@ -12,6 +12,8 @@
     }
   ],
   "env": {
-    "MAPBOX_TOKEN": "@mapbox_token"
+    "MAPBOX_TOKEN": "@mapbox_token",
+    "NODE_ENV": "production",
+    "MONGODB_URI": "@mongodb_uri"
   }
 } 

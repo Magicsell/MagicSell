@@ -390,29 +390,6 @@
       "deliveryNo": "D024",
       "deliveryNotes": "",
       "deliveredAt": null
-    },
-    {
-      "id": 25,
-      "customerPhone": "+9876543210",
-      "customerPostcode": "MDB123",
-      "totalAmount": 50,
-      "customerName": "MongoDB Test Customer",
-      "items": [
-        {
-          "price": 25,
-          "quantity": 2,
-          "name": "MongoDB Test Item"
-        }
-      ],
-      "basketNo": 25,
-      "status": "Pending",
-      "customerAddress": "MongoDB Test Address",
-      "paymentMethod": "Card",
-      "shopName": "MongoDB Test Shop",
-      "deliveryNo": "D025",
-      "deliveryNotes": "",
-      "createdAt": "2025-07-31T20:48:29.600Z",
-      "deliveredAt": null
     }
   ],
   "customers": [
@@ -655,18 +632,18 @@
     {
       "id": 20250731,
       "date": "2025-07-31",
-      "totalRevenue": 1430.49,
-      "totalOrders": 14,
+      "totalRevenue": 1380.49,
+      "totalOrders": 13,
       "deliveredOrders": 12,
-      "pendingOrders": 2,
+      "pendingOrders": 1,
       "inProcessOrders": 0,
-      "averageOrderValue": 102.17785714285715,
+      "averageOrderValue": 106.19153846153846,
       "topShop": "AK Grooming",
       "topShopRevenue": 360,
       "paymentBreakdown": {
         "Balance": 333,
         "Cash": 199,
-        "Card": 198,
+        "Card": 148,
         "Bank": 700.49
       }
     }
@@ -675,18 +652,18 @@
     {
       "id": 2025,
       "week": "2025-W31",
-      "totalRevenue": 3086.4799999999996,
-      "totalOrders": 25,
+      "totalRevenue": 3036.4799999999996,
+      "totalOrders": 24,
       "deliveredOrders": 23,
-      "pendingOrders": 2,
+      "pendingOrders": 1,
       "inProcessOrders": 0,
-      "averageOrderValue": 123.45919999999998,
+      "averageOrderValue": 126.51999999999998,
       "topShop": "AK Grooming",
       "topShopRevenue": 360,
       "paymentBreakdown": {
         "Balance": 625.5,
         "Cash": 1196.99,
-        "Card": 198,
+        "Card": 148,
         "Bank": 1065.99
       }
     }
@@ -696,7 +673,7 @@
       "id": 1,
       "type": "revenue",
       "timeframe": "tomorrow",
-      "predictedValue": 1573.5390000000002,
+      "predictedValue": 1518.5390000000002,
       "confidence": 85,
       "factors": [
         "historical_trend",
@@ -710,14 +687,14 @@
       "id": 1,
       "type": "comprehensive",
       "date": "2025-07-31",
-      "totalRevenue": 3086.4799999999996,
-      "totalOrders": 25,
-      "averageOrderValue": 123.45919999999998,
+      "totalRevenue": 3036.4799999999996,
+      "totalOrders": 24,
+      "averageOrderValue": 126.51999999999998,
       "topShop": "AK Grooming",
       "paymentBreakdown": {
         "Balance": 625.5,
         "Cash": 1196.99,
-        "Card": 198,
+        "Card": 148,
         "Bank": 1065.99
       }
     }

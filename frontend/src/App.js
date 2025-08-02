@@ -151,7 +151,7 @@ function App() {
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
     if (process.env.NODE_ENV === 'production') {
-      return 'https://magicsell-backend.vercel.app';
+      return 'https://magicroute.vercel.app';
     } else if (isIPhone && !isLocalhost) {
       // iPhone accessing via IP address
       const currentHost = window.location.hostname;
@@ -206,7 +206,7 @@ function App() {
 
   useEffect(() => {
     const apiUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://magicsell-backend.vercel.app'
+      ? 'https://magicroute.vercel.app'
       : 'http://localhost:5000';
     
     const newSocket = io(apiUrl);

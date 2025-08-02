@@ -14,7 +14,7 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: process.env.NODE_ENV === 'production' 
-      ? ["https://magicroute.co.uk", "https://magicroute-ahde.vercel.app"]
+      ? ["https://magicroute.co.uk", "https://www.magicroute.co.uk", "https://magicroute-ahde.vercel.app"]
       : ["http://localhost:3000", "http://localhost:3001"],
     methods: ["GET", "POST", "PUT", "DELETE"]
   }
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ["https://magicroute.co.uk", "https://magicroute-ahde.vercel.app"]
+    ? ["https://magicroute.co.uk", "https://www.magicroute.co.uk", "https://magicroute-ahde.vercel.app"]
     : ["http://localhost:3000", "http://localhost:3001"],
   credentials: true
 }));

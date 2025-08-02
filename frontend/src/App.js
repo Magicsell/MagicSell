@@ -146,19 +146,7 @@ function App() {
 
   // Helper function to get API URL
   const getApiUrl = () => {
-    // For iPhone testing, use computer's IP address
-    const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
-    if (process.env.NODE_ENV === 'production') {
-      return 'https://magicsell-backend.vercel.app';
-    } else if (isIPhone && !isLocalhost) {
-      // iPhone accessing via IP address
-      const currentHost = window.location.hostname;
-      return `http://${currentHost}:5000`;
-    } else {
-      return 'http://localhost:5000';
-    }
+    return process.env.REACT_APP_API_URL || '/api';
   };
 
   // Filter functions
@@ -205,9 +193,7 @@ function App() {
   };
 
   useEffect(() => {
-    const apiUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://magicsell-backend.vercel.app'
-      : 'http://localhost:5000';
+    const apiUrl = process.env.REACT_APP_API_URL || '/api';
     
     const newSocket = io(apiUrl);
     setSocket(newSocket);

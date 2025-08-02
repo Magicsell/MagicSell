@@ -149,8 +149,9 @@ function App() {
     // For iPhone testing, use computer's IP address
     const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isProduction = window.location.hostname === 'www.magicroute.co.uk' || window.location.hostname === 'magicroute-ahde.vercel.app';
     
-    if (process.env.NODE_ENV === 'production') {
+    if (isProduction || process.env.NODE_ENV === 'production') {
       return 'https://api.magicroute.co.uk';
     } else if (isIPhone && !isLocalhost) {
       // iPhone accessing via IP address
@@ -205,7 +206,8 @@ function App() {
   };
 
   useEffect(() => {
-    const apiUrl = process.env.NODE_ENV === 'production' 
+    const isProduction = window.location.hostname === 'www.magicroute.co.uk' || window.location.hostname === 'magicroute-ahde.vercel.app';
+    const apiUrl = (isProduction || process.env.NODE_ENV === 'production')
       ? 'https://api.magicroute.co.uk'
       : 'http://localhost:5000';
     

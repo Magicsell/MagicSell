@@ -1,0 +1,52 @@
+.App {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #40E0D0 0%, #20B2AA 50%, #008B8B 100%);
+}
+
+/* Material-UI componentlerinin daha iyi görünmesi için */
+.MuiPaper-root {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.MuiCard-root {
+  transition: transform 0.2s ease-in-out;
+}
+
+.MuiCard-root:hover {
+  transform: translateY(-2px);
+}
+
+/* Responsive tasarım için */
+@media (max-width: 768px) {
+  .MuiContainer-root {
+    padding: 16px !important;
+  }
+}
+
+/* Smooth animations */
+.MuiButton-root {
+  transition: all 0.3s ease !important;
+}
+
+.MuiTextField-root {
+  transition: all 0.3s ease !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

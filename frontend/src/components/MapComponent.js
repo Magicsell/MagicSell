@@ -26,7 +26,17 @@ const REAL_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN || 'pk.eyJ1IjoibWFnaWNzZWx
 
 // Helper function to get API URL
 const getApiUrl = () => {
-  return process.env.REACT_APP_API_URL || '/api';
+  // For iPhone testing, use computer's IP address
+  const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  
+  if (isIPhone && !isLocalhost) {
+    // iPhone accessing via IP address
+    const currentHost = window.location.hostname;
+    return `http://${currentHost}:5000`;
+  } else {
+    return 'http://localhost:5000';
+  }
 };
 
 const MapComponent = ({ orders, optimizedRoute, onRouteOptimized }) => {

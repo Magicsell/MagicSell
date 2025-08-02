@@ -43,7 +43,7 @@ const ComprehensiveAnalytics = () => {
       console.log('📊 Fetching comprehensive analytics...');
       
       // Use the new comprehensive analytics API
-      const response = await fetch('/api/analytics');
+      const response = await fetch('http://localhost:5000/api/analytics');
       const data = await response.json();
 
       console.log('📊 Comprehensive analytics received:', data);

@@ -43,7 +43,15 @@ const ComprehensiveAnalytics = () => {
       console.log('📊 Fetching comprehensive analytics...');
       
       // Use the new comprehensive analytics API
-      const response = await fetch('http://localhost:5000/api/analytics');
+      const getApiUrl = () => {
+        const currentHost = window.location.hostname;
+        if (currentHost === 'www.magicroute.co.uk' || currentHost === 'magicroute-ahde.vercel.app' || currentHost === 'magicroute.co.uk') {
+          return 'https://api.magicroute.co.uk';
+        }
+        return 'http://localhost:5000';
+      };
+      
+      const response = await fetch(`${getApiUrl()}/api/analytics`);
       const data = await response.json();
 
       console.log('📊 Comprehensive analytics received:', data);

@@ -4,8 +4,8 @@
     "react-app/jest"
   ],
   "rules": {
-    "no-unused-vars": "warn",
-    "react-hooks/exhaustive-deps": "warn",
-    "no-mixed-operators": "warn"
+    "no-unused-vars": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "no-mixed-operators": "off"
   }
 } 

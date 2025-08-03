@@ -15,7 +15,7 @@ const io = socketIo(server, {
   cors: {
     origin: process.env.NODE_ENV === 'production' 
       ? ["https://magicsell-frontend.vercel.app", "https://magicsell.vercel.app"]
-      : ["http://localhost:3000", "http://localhost:3001"],
+      : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
     methods: ["GET", "POST", "PUT", "DELETE"]
   }
 });
@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? ["https://magicsell-frontend.vercel.app", "https://magicsell.vercel.app", "https://magicsell-git-main.vercel.app"]
-    : ["http://localhost:3000", "http://localhost:3001"],
+    : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
   credentials: true
 }));
 app.use(express.json());
@@ -1880,7 +1880,7 @@ saveData = function(data) {
   broadcastUpdate();
 };
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Local: http://localhost:${PORT}`);

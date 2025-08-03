@@ -146,24 +146,18 @@ function App() {
 
   // Helper function to get API URL
   const getApiUrl = () => {
-    // Force production API for live domains
-    const currentHost = window.location.hostname;
-    console.log('🌐 Current hostname:', currentHost);
-    
-    if (currentHost === 'www.magicroute.co.uk' || currentHost === 'magicroute-ahde.vercel.app' || currentHost === 'magicroute.co.uk') {
-      console.log('🚀 Using production API: https://api.magicroute.co.uk');
-      return 'https://api.magicroute.co.uk';
-    }
-    
     // For iPhone testing, use computer's IP address
     const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isLocalhost = currentHost === 'localhost' || currentHost === '127.0.0.1';
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
-    if (isIPhone && !isLocalhost) {
+    if (process.env.NODE_ENV === 'production') {
+      return 'https://magicsell-backend.vercel.app';
+    } else if (isIPhone && !isLocalhost) {
       // iPhone accessing via IP address
-      return `http://${currentHost}:5000`;
+      const currentHost = window.location.hostname;
+      return `http://${currentHost}:5001`;
     } else {
-      return 'http://localhost:5000';
+      return 'http://localhost:5001';
     }
   };
 
@@ -211,11 +205,9 @@ function App() {
   };
 
   useEffect(() => {
-    const currentHost = window.location.hostname;
-    const isProduction = currentHost === 'www.magicroute.co.uk' || currentHost === 'magicroute-ahde.vercel.app' || currentHost === 'magicroute.co.uk';
-    const apiUrl = isProduction ? 'https://api.magicroute.co.uk' : 'http://localhost:5000';
-    
-    console.log('🔌 Socket connecting to:', apiUrl);
+    const apiUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://magicsell-backend.vercel.app'
+      : 'http://localhost:5001';
     
     const newSocket = io(apiUrl);
     setSocket(newSocket);

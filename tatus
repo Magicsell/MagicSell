@@ -1,0 +1,5 @@
+[33m209e63c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix hardcoded localhost URL in DailySalesChart.js - use dynamic API URL
+[33ma7d4b49[m Force production API URL with console logging for debugging
+[33m90d94a9[m Fix production API URL detection - force production mode for magicroute.co.uk domain
+[33m0410132[m Fix CORS configuration - add www.magicroute.co.uk to allowed origins
+[33m2466c46[m Update domain configuration for magicroute.co.uk - frontend and backend URLs

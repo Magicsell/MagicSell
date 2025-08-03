@@ -44,11 +44,19 @@ const ComprehensiveAnalytics = () => {
       
       // Use the new comprehensive analytics API
       const getApiUrl = () => {
+              // For local development
+      const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      
+      if (isIPhone && !isLocalhost) {
+        // iPhone accessing via IP address
         const currentHost = window.location.hostname;
-        if (currentHost === 'www.magicroute.co.uk' || currentHost === 'magicroute-ahde.vercel.app' || currentHost === 'magicroute.co.uk') {
-          return 'https://api.magicroute.co.uk';
-        }
-        return 'http://localhost:5000';
+        return `http://${currentHost}:5000`;
+      } else {
+        return process.env.NODE_ENV === 'production' 
+      ? 'https://magicsell-backend.vercel.app'
+      : 'http://localhost:5001';
+      }
       };
       
       const response = await fetch(`${getApiUrl()}/api/analytics`);

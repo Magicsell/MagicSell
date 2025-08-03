@@ -19,44 +19,8 @@
       "dest": "/backend/index.js"
     },
     {
-      "src": "/static/(.*)",
-      "dest": "/frontend/build/static/$1"
-    },
-    {
-      "src": "/manifest.json",
-      "dest": "/frontend/build/manifest.json"
-    },
-    {
-      "src": "/favicon.ico",
-      "dest": "/frontend/build/favicon.ico"
-    },
-    {
-      "src": "/logo192.png",
-      "dest": "/frontend/build/logo192.png"
-    },
-    {
-      "src": "/logo512.png",
-      "dest": "/frontend/build/logo512.png"
-    },
-    {
-      "src": "/asset-manifest.json",
-      "dest": "/frontend/build/asset-manifest.json"
-    },
-    {
-      "src": "/service-worker.js",
-      "dest": "/frontend/build/service-worker.js"
-    },
-    {
-      "src": "/browserconfig.xml",
-      "dest": "/frontend/build/browserconfig.xml"
-    },
-    {
-      "src": "/robots.txt",
-      "dest": "/frontend/build/robots.txt"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/frontend/build/index.html"
+      "dest": "/frontend/build/$1"
     }
   ]
 } 

@@ -22,8 +22,5 @@
       "src": "/(.*)",
       "dest": "/frontend/$1"
     }
-  ],
-  "env": {
-    "MONGODB_URI": "mongodb+srv://ilker:VUhUxxkx9hzbVymR@cluster0.tsgkych.mongodb.net/magicsell?retryWrites=true&w=majority&appName=Cluster0"
-  }
+  ]
 } 

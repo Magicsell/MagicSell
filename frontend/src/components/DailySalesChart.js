@@ -53,9 +53,9 @@ const ComprehensiveAnalytics = () => {
         const currentHost = window.location.hostname;
         return `http://${currentHost}:5000`;
       } else {
-        return process.env.NODE_ENV === 'production' 
-      ? 'https://magicsell-backend.vercel.app'
-      : 'http://localhost:5001';
+              return process.env.NODE_ENV === 'production' 
+        ? '/api'
+        : 'http://localhost:5001';
       }
       };
       

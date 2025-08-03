@@ -19,10 +19,10 @@ import {
 } from '@mui/material';
 
 // Mapbox access token from environment variable
-const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN || 'pk.eyJ1IjoibWFnaWNzZWxsIiwiYSI6ImNtZGxoeWVlcjA1aTkybHIwaGRsb2VjbnUifQ.NWaZFfNKBs0C3IC0BtRtww';
+  const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
 // Real Mapbox token for MagicSell
-const REAL_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN || 'pk.eyJ1IjoibWFnaWNzZWxsIiwiYSI6ImNtZGxoeWVlcjA1aTkybHIwaGRsb2VjbnUifQ.NWaZFfNKBs0C3IC0BtRtww';
+  const REAL_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
 // Helper function to get API URL
 const getApiUrl = () => {

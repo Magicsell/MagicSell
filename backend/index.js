@@ -21,7 +21,7 @@ const io = socketIo(server, {
 });
 
 // Mapbox token configuration
-const MAPBOX_TOKEN = process.env.MAPBOX_TOKEN || 'pk.eyJ1IjoibWFnaWNzZWxsIiwiYSI6ImNtZGxoeWVlcjA1aTkybHIwaGRsb2VjbnUifQ.NWaZFfNKBs0C3IC0BtRtww';
+const MAPBOX_TOKEN = process.env.MAPBOX_TOKEN;
 
 // Security middleware
 app.use((req, res, next) => {

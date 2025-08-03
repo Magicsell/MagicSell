@@ -14,7 +14,7 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: process.env.NODE_ENV === 'production' 
-      ? ["https://magicsell-frontend.vercel.app", "https://magicsell.vercel.app"]
+      ? ["https://magicroute.vercel.app"]
       : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
     methods: ["GET", "POST", "PUT", "DELETE"]
   }
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ["https://magicsell-frontend.vercel.app", "https://magicsell.vercel.app", "https://magicsell-git-main.vercel.app"]
+    ? ["https://magicroute.vercel.app", "https://magicroute-git-main.vercel.app"]
     : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
   credentials: true
 }));

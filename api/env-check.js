@@ -1,7 +1,7 @@
-export default (req, res) => {
+module.exports = (req, res) => {
   res.setHeader('Content-Type','application/json');
-  const keys = ['MONGODB_URI','DB_NAME'];
-  res.status(200).json(
-    Object.fromEntries(keys.map(k => [k, !!process.env[k]]))
-  );
+  res.status(200).json({
+    MONGODB_URI: !!process.env.MONGODB_URI,
+    DB_NAME: !!process.env.DB_NAME
+  });
 };

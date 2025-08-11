@@ -5,6 +5,7 @@ let client;
 let dbService;
 let isConnected = false;
 
+<<<<<<< HEAD
 // Initialize database connection
 async function initDB() {
   if (!client && process.env.MONGODB_URI) {
@@ -21,6 +22,57 @@ async function initDB() {
       console.error('❌ MongoDB connection failed:', error.message);
       isConnected = false;
     }
+=======
+// Global connection cache for serverless
+let globalClient = null;
+let globalDb = null;
+
+// Initialize database connection with global cache
+async function initDB() {
+  try {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+      console.error('❌ MONGODB_URI environment variable is missing');
+      return false;
+    }
+
+    // Use global cache if available
+    if (globalClient && globalDb) {
+      client = globalClient;
+      dbService = new DatabaseService();
+      dbService.client = client;
+      dbService.db = globalDb;
+      isConnected = true;
+      return true;
+    }
+
+    // Create new connection if global cache is empty
+    client = new MongoClient(uri, {
+      serverSelectionTimeoutMS: 5000,
+      maxIdleTimeMS: 60000,
+      maxPoolSize: 1, // Important for serverless
+      minPoolSize: 0
+    });
+
+    await client.connect();
+    const db = client.db(process.env.DB_NAME || 'magicsell');
+    
+    // Cache globally
+    globalClient = client;
+    globalDb = db;
+    
+    dbService = new DatabaseService();
+    dbService.client = client;
+    dbService.db = db;
+    isConnected = true;
+    
+    console.log('✅ Connected to MongoDB:', db.databaseName);
+    return true;
+  } catch (error) {
+    console.error('❌ MongoDB connection failed:', error.message);
+    isConnected = false;
+    return false;
+>>>>>>> 4f701d2f37654b61bfe35a7b7a0bd4884c14ac08
   }
 }
 

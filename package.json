@@ -8,7 +8,7 @@
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:frontend\"",
     "dev:api": "cd api && npm run dev",
     "dev:frontend": "cd frontend && npm start",
-    "build": "npm run build:api && npm run build:frontend",
+    "build": "cd frontend && npm ci && npm run build",
     "build:api": "cd api && npm run vercel-build",
     "build:frontend": "cd frontend && npm run vercel-build",
     "build:frontend-only": "cd frontend && npm run vercel-build",
@@ -20,6 +20,9 @@
     "frontend",
     "api"
   ],
+  "dependencies": {
+    "mongodb": "^6.6.0"
+  },
   "keywords": [
     "sales",
     "delivery",
@@ -32,8 +35,8 @@
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "rimraf": "^6.0.1",
-    "shx": "^0.4.0"
+    "rimraf": "^5.0.0",
+    "shx": "^0.3.4"
   },
   "engines": {
     "node": ">=18.0.0",

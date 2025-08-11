@@ -2,15 +2,41 @@
   "name": "magicsell",
   "version": "1.0.0",
   "private": true,
+  "description": "MagicSell - Sales and Delivery Management System",
+  "main": "api/index.js",
   "scripts": {
-    "build": "cd frontend && npm run build && cd .. && Copy-Item -Path 'frontend/build/*' -Destination 'dist/' -Recurse -Force"
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:frontend\"",
+    "dev:api": "cd api && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "build": "npm run build:api && npm run build:frontend",
+    "build:api": "cd api && npm run vercel-build",
+    "build:frontend": "cd frontend && npm run vercel-build",
+    "start": "cd api && npm start",
+    "install:all": "npm install && cd api && npm install && cd ../frontend && npm install",
+    "clean": "rimraf dist build node_modules api/node_modules frontend/node_modules",
+    "prepare": "npm run install:all"
   },
   "workspaces": [
     "frontend",
     "api"
   ],
+  "keywords": [
+    "sales",
+    "delivery",
+    "management",
+    "react",
+    "nodejs",
+    "express"
+  ],
+  "author": "MagicSell Team",
+  "license": "MIT",
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "rimraf": "^6.0.1",
     "shx": "^0.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

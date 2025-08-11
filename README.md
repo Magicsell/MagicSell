@@ -1,91 +1,112 @@
-# MagicRoute - PWA + Vercel Deployment
+# MagicSell 🚀
 
-MagicRoute is a delivery management system with route optimization, mobile driver app, and PWA capabilities.
+Modern satış ve teslimat yönetim sistemi. React frontend ve Node.js backend ile geliştirilmiştir.
 
-## 🚀 Vercel Deployment
+## ✨ Özellikler
 
-### Prerequisites
-- Vercel account
-- GitHub repository
-- Mapbox API token
+- 🚗 Sürücü uygulaması
+- 📊 Satış raporları ve grafikleri
+- 🔐 Admin giriş sistemi
+- 📱 QR kod üretimi
+- 🗺️ Harita entegrasyonu
+- 📈 Satış tahminleri
+- 🔔 Bildirim sistemi
 
-### Deployment Steps
+## 🏗️ Proje Yapısı
 
-1. **Push to GitHub**
-   ```bash
-   git add .
-   git commit -m "Prepare for Vercel deployment"
-   git push origin main
-   ```
-
-2. **Connect to Vercel**
-   - Go to [vercel.com](https://vercel.com)
-   - Import your GitHub repository
-   - Select the MagicSell folder
-
-3. **Environment Variables**
-   Add these environment variables in Vercel:
-   - `REACT_APP_MAPBOX_TOKEN`: Your Mapbox API token
-   - `MAPBOX_TOKEN`: Your Mapbox API token (for backend)
-
-4. **Deploy**
-   - Vercel will automatically detect the configuration
-   - Frontend will be built and deployed
-   - Backend API will be deployed as serverless functions
-
-### Project Structure
 ```
 MagicSell/
-├── frontend/          # React PWA
-├── backend/           # Express API
-│   └── api/          # Vercel serverless functions
-├── vercel.json       # Vercel configuration
-└── README.md
+├── frontend/          # React uygulaması
+├── api/              # Node.js backend API
+├── backend/          # Yedek backend
+└── vercel.json       # Vercel deployment konfigürasyonu
 ```
 
-### Features
-- ✅ PWA (Progressive Web App)
-- ✅ Mobile-first design
-- ✅ Route optimization with Mapbox
-- ✅ QR code generation for mobile access
-- ✅ Real-time updates with Socket.io
-- ✅ PDF route printing
-- ✅ Customer autocomplete
-- ✅ Driver app for mobile devices
+## 🚀 Hızlı Başlangıç
 
-### URLs
-- **Production**: `https://magicsell.vercel.app`
-- **Backend API**: `https://magicsell.vercel.app/api/*`
+### Gereksinimler
+- Node.js 18+ 
+- npm 8+
 
-### Mobile Access
-- Scan QR code from the Driver tab
-- Install as PWA on mobile devices
-- Access driver interface for order management
-
-### Environment Variables
-```env
-REACT_APP_MAPBOX_TOKEN=pk.eyJ1IjoibWFnaWNzZWxsIiwiYSI6ImNtZGxoeWVlcjA1aTkybHIwaGRsb2VjbnUifQ.NWaZFfNKBs0C3IC0BtRtww
-MAPBOX_TOKEN=pk.eyJ1IjoibWFnaWNzZWxsIiwiYSI6ImNtZGxoeWVlcjA1aTkybHIwaGRsb2VjbnUifQ.NWaZFfNKBs0C3IC0BtRtww
-```
-
-### Local Development
+### Kurulum
 ```bash
-# Frontend
-cd frontend
-npm start
+# Tüm bağımlılıkları yükle
+npm run install:all
 
-# Backend
-cd backend
-npm start
+# Geliştirme modunda çalıştır
+npm run dev
+
+# Production build
+npm run build
 ```
 
-### Build Commands
+### Geliştirme
 ```bash
-# Frontend build
-cd frontend
+# Sadece API'yi çalıştır
+npm run dev:api
+
+# Sadece frontend'i çalıştır
+npm run dev:frontend
+```
+
+## 🌐 Deployment
+
+### Vercel ile Deploy
+1. Vercel hesabınıza giriş yapın
+2. GitHub repository'nizi bağlayın
+3. Otomatik deployment başlayacaktır
+
+### Manuel Deploy
+```bash
+# Build
 npm run build
 
-# Backend (no build needed)
-cd backend
-npm start
-``` 
+# Vercel'e deploy
+vercel --prod
+```
+
+## 🔧 Konfigürasyon
+
+### Environment Variables
+`.env` dosyası oluşturun:
+```env
+NODE_ENV=production
+MONGODB_URI=your_mongodb_uri
+API_KEY=your_api_key
+```
+
+## 📱 API Endpoints
+
+- `GET /api/orders` - Siparişleri listele
+- `POST /api/orders` - Yeni sipariş oluştur
+- `GET /api/sales` - Satış raporları
+- `GET /api/drivers` - Sürücü bilgileri
+
+## 🛠️ Teknolojiler
+
+- **Frontend**: React, Material-UI, Chart.js
+- **Backend**: Node.js, Express, Socket.io
+- **Database**: MongoDB
+- **Deployment**: Vercel
+- **Maps**: Mapbox GL
+
+## 📄 Lisans
+
+MIT License
+
+## 🤝 Katkıda Bulunma
+
+1. Fork yapın
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Commit yapın (`git commit -m 'Add amazing feature'`)
+4. Push yapın (`git push origin feature/amazing-feature`)
+5. Pull Request oluşturun
+
+## 📞 İletişim
+
+- Proje: [GitHub Repository](https://github.com/yourusername/magicsell)
+- Sorunlar: [GitHub Issues](https://github.com/yourusername/magicsell/issues)
+
+---
+
+⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın! 

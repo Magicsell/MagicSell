@@ -7,6 +7,8 @@ yarn-error.log*
 # Production builds
 build/
 dist/
+.next/
+out/
 
 # Environment variables
 .env
@@ -60,5 +62,20 @@ jspm_packages/
 .env
 
 # Vercel
-.vercel 
 .vercel
+.vercel
+
+# Temporary files
+*.tmp
+*.temp
+
+# Database files (if using local files)
+*.db
+*.sqlite
+
+# Backup files
+*_backup_*
+data_backup_*.json
+
+# Production data files
+data_production.json

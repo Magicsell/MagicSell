@@ -1,0 +1,21 @@
+{
+  "name": "magicsell",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && cd frontend && npm ci && npm run build && cd .. && shx mkdir -p dist && shx cp -r frontend/build/* dist/",
+    "vercel-build": "cd frontend && npm ci && npm run build && cd .. && shx mkdir -p dist && shx cp -r frontend/build/* dist/"
+  },
+  "dependencies": {
+    "mongodb": "^6.3.0"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "shx": "^0.3.4"
+  },
+  "workspaces": [
+    "frontend"
+  ],
+  "engines": { "node": ">=18" }
+}

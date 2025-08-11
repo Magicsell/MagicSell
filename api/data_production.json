@@ -297,12 +297,12 @@
       "customerAddress": "308 Charminster Road",
       "customerPostcode": "BH8 9RT",
       "totalAmount": "54",
-      "status": "Delivered",
-      "paymentMethod": "Cash",
+      "status": "Pending",
+      "paymentMethod": "",
       "deliveryNo": "D019",
       "deliveryNotes": "",
       "createdAt": "2025-07-31T19:06:26.889Z",
-      "deliveredAt": "2025-07-31T20:17:45.072Z"
+      "deliveredAt": "2025-07-31T19:20:29.032Z"
     },
     {
       "id": 20,
@@ -313,12 +313,12 @@
       "customerAddress": "3A Spur Road ",
       "customerPostcode": "PO6 3DY",
       "totalAmount": "154",
-      "status": "Delivered",
-      "paymentMethod": "Cash",
+      "status": "Pending",
+      "paymentMethod": "",
       "deliveryNo": "D020",
       "deliveryNotes": "",
       "createdAt": "2025-07-31T19:06:38.241Z",
-      "deliveredAt": "2025-08-10T19:06:56.734Z"
+      "deliveredAt": "2025-07-31T19:20:22.943Z"
     },
     {
       "id": 21,
@@ -329,12 +329,12 @@
       "customerAddress": "61 High Street , Cosham",
       "customerPostcode": "PO6 3AX",
       "totalAmount": "105",
-      "status": "Delivered",
-      "paymentMethod": "Bank Transfer",
+      "status": "Pending",
+      "paymentMethod": "",
       "deliveryNo": "D021",
       "deliveryNotes": "",
       "createdAt": "2025-07-31T19:06:51.242Z",
-      "deliveredAt": "2025-07-31T20:18:13.596Z"
+      "deliveredAt": "2025-07-31T19:20:18.043Z"
     }
   ],
   "customers": [
@@ -517,24 +517,6 @@
       "address": "61 High Street , Cosham",
       "postcode": "PO6 3AX",
       "city": "Portsmouth"
-    },
-    {
-      "id": 21,
-      "shopName": "ss",
-      "name": "Barzan",
-      "phone": "+447492032480",
-      "address": "61 High Street , Cosham",
-      "postcode": "PO6 3AX",
-      "city": "Portsmouth"
-    },
-    {
-      "id": 22,
-      "shopName": "aa",
-      "name": "ilker arslanoglu",
-      "phone": "07400233013",
-      "address": "85 Great Portland Street",
-      "postcode": "W1W 7LT",
-      "city": "London"
     }
   ],
   "dailySales": [
@@ -579,17 +561,17 @@
       "date": "2025-07-31",
       "totalRevenue": 1313.49,
       "totalOrders": 10,
-      "deliveredOrders": 10,
-      "pendingOrders": 0,
+      "deliveredOrders": 7,
+      "pendingOrders": 3,
       "inProcessOrders": 0,
       "averageOrderValue": 131.349,
       "topShop": "AK Grooming",
       "topShopRevenue": 360,
       "paymentBreakdown": {
         "Balance": 156,
-        "Cash": 343,
+        "Cash": 135,
         "Card": 114,
-        "Bank": 700.49
+        "Bank": 595.49
       }
     }
   ],
@@ -599,17 +581,17 @@
       "week": "2025-W31",
       "totalRevenue": 2969.4799999999996,
       "totalOrders": 21,
-      "deliveredOrders": 21,
-      "pendingOrders": 0,
+      "deliveredOrders": 18,
+      "pendingOrders": 3,
       "inProcessOrders": 0,
       "averageOrderValue": 141.4038095238095,
       "topShop": "AK Grooming",
       "topShopRevenue": 360,
       "paymentBreakdown": {
         "Balance": 448.5,
-        "Cash": 1340.99,
+        "Cash": 1132.99,
         "Card": 114,
-        "Bank": 1065.99
+        "Bank": 960.99
       }
     }
   ],
@@ -631,26 +613,18 @@
     {
       "id": 1,
       "type": "comprehensive",
-      "date": "2025-08-10",
+      "date": "2025-07-31",
       "totalRevenue": 2969.4799999999996,
       "totalOrders": 21,
       "averageOrderValue": 141.4038095238095,
       "topShop": "AK Grooming",
       "paymentBreakdown": {
         "Balance": 448.5,
-        "Cash": 1340.99,
+        "Cash": 1132.99,
         "Card": 114,
-        "Bank": 1065.99
+        "Bank": 960.99
       }
     }
   ],
-  "notifications": [
-    {
-      "id": 1,
-      "type": "order_update",
-      "message": "Order #21 delivered successfully",
-      "timestamp": "2025-07-31T20:18:13.596Z",
-      "read": false
-    }
-  ]
+  "notifications": []
 }

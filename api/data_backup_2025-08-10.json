@@ -335,6 +335,22 @@
       "deliveryNotes": "",
       "createdAt": "2025-07-31T19:06:51.242Z",
       "deliveredAt": "2025-07-31T20:18:13.596Z"
+    },
+    {
+      "id": 23,
+      "basketNo": 23,
+      "shopName": "ss",
+      "customerName": "Barzan",
+      "customerPhone": "+447492032480",
+      "customerAddress": "61 High Street , Cosham",
+      "customerPostcode": "PO6 3AX",
+      "totalAmount": "34",
+      "status": "Delivered",
+      "paymentMethod": "Card",
+      "deliveryNo": "D023",
+      "deliveryNotes": "",
+      "createdAt": "2025-07-31T20:17:33.238Z",
+      "deliveredAt": "2025-07-31T20:18:02.724Z"
     }
   ],
   "customers": [
@@ -577,18 +593,18 @@
     {
       "id": 20250731,
       "date": "2025-07-31",
-      "totalRevenue": 1313.49,
-      "totalOrders": 10,
-      "deliveredOrders": 10,
+      "totalRevenue": 1347.49,
+      "totalOrders": 11,
+      "deliveredOrders": 11,
       "pendingOrders": 0,
       "inProcessOrders": 0,
-      "averageOrderValue": 131.349,
+      "averageOrderValue": 122.49909090909091,
       "topShop": "AK Grooming",
       "topShopRevenue": 360,
       "paymentBreakdown": {
         "Balance": 156,
         "Cash": 343,
-        "Card": 114,
+        "Card": 148,
         "Bank": 700.49
       }
     }
@@ -597,18 +613,18 @@
     {
       "id": 2025,
       "week": "2025-W31",
-      "totalRevenue": 2969.4799999999996,
-      "totalOrders": 21,
-      "deliveredOrders": 21,
+      "totalRevenue": 3003.4799999999996,
+      "totalOrders": 22,
+      "deliveredOrders": 22,
       "pendingOrders": 0,
       "inProcessOrders": 0,
-      "averageOrderValue": 141.4038095238095,
+      "averageOrderValue": 136.52181818181816,
       "topShop": "AK Grooming",
       "topShopRevenue": 360,
       "paymentBreakdown": {
         "Balance": 448.5,
         "Cash": 1340.99,
-        "Card": 114,
+        "Card": 148,
         "Bank": 1065.99
       }
     }
@@ -618,7 +634,7 @@
       "id": 1,
       "type": "revenue",
       "timeframe": "tomorrow",
-      "predictedValue": 1444.8390000000002,
+      "predictedValue": 1482.239,
       "confidence": 85,
       "factors": [
         "historical_trend",
@@ -632,14 +648,14 @@
       "id": 1,
       "type": "comprehensive",
       "date": "2025-08-10",
-      "totalRevenue": 2969.4799999999996,
-      "totalOrders": 21,
-      "averageOrderValue": 141.4038095238095,
+      "totalRevenue": 3003.4799999999996,
+      "totalOrders": 22,
+      "averageOrderValue": 136.52181818181816,
       "topShop": "AK Grooming",
       "paymentBreakdown": {
         "Balance": 448.5,
         "Cash": 1340.99,
-        "Card": 114,
+        "Card": 148,
         "Bank": 1065.99
       }
     }
@@ -648,8 +664,8 @@
     {
       "id": 1,
       "type": "order_update",
-      "message": "Order #21 delivered successfully",
-      "timestamp": "2025-07-31T20:18:13.596Z",
+      "message": "Order #23 delivered successfully",
+      "timestamp": "2025-07-31T20:18:02.724Z",
       "read": false
     }
   ]

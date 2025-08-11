@@ -1,7 +1,7 @@
 {
-  "short_name": "MagicRoute",
-  "name": "MagicRoute Driver App",
-  "description": "Mobile delivery tracking app for drivers",
+  "short_name": "MAGICSELL",
+  "name": "MAGICSELL - Sales and Delivery Management",
+  "description": "Mobile sales and delivery management app",
   "icons": [
     {
       "src": "favicon.ico",
@@ -22,7 +22,7 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#667eea",
-  "background_color": "#ffffff",
+  "background_color": "#000000",
   "orientation": "portrait",
   "scope": "/",
   "categories": ["business", "productivity", "utilities"],

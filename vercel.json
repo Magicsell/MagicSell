@@ -29,7 +29,8 @@
   },
   "functions": {
     "api/index.js": {
-      "auth": false
+      "auth": false,
+      "maxDuration": 30
     }
   }
 }

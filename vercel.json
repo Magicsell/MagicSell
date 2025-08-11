@@ -26,11 +26,5 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "api/index.js": {
-      "auth": false,
-      "maxDuration": 30
-    }
   }
 }

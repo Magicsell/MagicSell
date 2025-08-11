@@ -13,8 +13,7 @@
     "build:frontend": "cd frontend && npm run vercel-build",
     "start": "cd api && npm start",
     "install:all": "npm install && cd api && npm install && cd ../frontend && npm install",
-    "clean": "rimraf dist build node_modules api/node_modules frontend/node_modules",
-    "prepare": "npm run install:all"
+    "clean": "rimraf dist build node_modules api/node_modules frontend/node_modules"
   },
   "workspaces": [
     "frontend",

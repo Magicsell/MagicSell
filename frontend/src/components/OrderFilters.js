@@ -200,7 +200,7 @@ const OrderFilters = ({ onFiltersChange, onClearFilters }) => {
               >
                 <MenuItem value="">All Statuses</MenuItem>
                 <MenuItem value="Pending">Pending</MenuItem>
-                <MenuItem value="In Process">In Process</MenuItem>
+                <MenuItem value="In Progress">In Progress</MenuItem>
                 <MenuItem value="Delivered">Delivered</MenuItem>
               </Select>
             </FormControl>

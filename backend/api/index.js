@@ -180,7 +180,7 @@ function recalculateAnalytics(orders) {
     const totalOrders = dayOrders.length;
     const deliveredOrders = dayOrders.filter(order => order.status === 'Delivered').length;
     const pendingOrders = dayOrders.filter(order => order.status === 'Pending').length;
-    const inProcessOrders = dayOrders.filter(order => order.status === 'In Process').length;
+    const inProcessOrders = dayOrders.filter(order => order.status === 'In Progress').length;
     
     // Calculate payment breakdown
     const paymentBreakdown = { Balance: 0, Cash: 0, Card: 0, Bank: 0 };
@@ -227,7 +227,7 @@ function recalculateAnalytics(orders) {
     const totalOrders = weekOrders.length;
     const deliveredOrders = weekOrders.filter(order => order.status === 'Delivered').length;
     const pendingOrders = weekOrders.filter(order => order.status === 'Pending').length;
-    const inProcessOrders = weekOrders.filter(order => order.status === 'In Process').length;
+    const inProcessOrders = weekOrders.filter(order => order.status === 'In Progress').length;
     
     // Calculate payment breakdown
     const paymentBreakdown = { Balance: 0, Cash: 0, Card: 0, Bank: 0 };
@@ -665,7 +665,7 @@ app.post('/api/optimize-route', async (req, res) => {
     const { startPostcode = "BH13 7EX", orders: requestOrders = [] } = req.body;
     const ordersToOptimize = requestOrders.length > 0 ? requestOrders : orders;
     const activeOrders = ordersToOptimize.filter(order => 
-      order.status === 'Pending' || order.status === 'In Process'
+      order.status === 'Pending' || order.status === 'In Progress'
     );
 
     console.log(`🔴 Route optimization requested for ${activeOrders.length} active orders`);
@@ -1155,7 +1155,7 @@ app.get('/api/analytics', (req, res) => {
     // Calculate comprehensive analytics
     const totalOrders = orders.length;
     const pendingOrders = orders.filter(order => order.status === 'Pending').length;
-    const inProcessOrders = orders.filter(order => order.status === 'In Process').length;
+    const inProcessOrders = orders.filter(order => order.status === 'In Progress').length;
     const deliveredOrders = orders.filter(order => order.status === 'Delivered').length;
     const cancelledOrders = orders.filter(order => order.status === 'Cancelled').length;
     

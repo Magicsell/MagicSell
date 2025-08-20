@@ -335,6 +335,198 @@
       "deliveryNotes": "",
       "createdAt": "2025-07-31T19:06:51.242Z",
       "deliveredAt": "2025-07-31T20:18:13.596Z"
+    },
+    {
+      "id": 22,
+      "basketNo": 22,
+      "shopName": "aa",
+      "customerName": "ilker arslanoglu",
+      "customerPhone": "07400233013",
+      "customerAddress": "85 Great Portland Street",
+      "customerPostcode": "W1W 7LT",
+      "totalAmount": "100",
+      "status": "Delivered",
+      "paymentMethod": "Cash",
+      "deliveryNo": "D022",
+      "deliveryNotes": "testest",
+      "createdAt": "2025-08-19T13:55:00.701Z",
+      "deliveredAt": "2025-08-19T13:57:03.737Z"
+    },
+    {
+      "id": 23,
+      "basketNo": 23,
+      "shopName": "aa",
+      "customerName": "ilker arslanoglu",
+      "customerPhone": "07400233013",
+      "customerAddress": "85 Great Portland Street",
+      "customerPostcode": "W1W 7LT",
+      "totalAmount": "50",
+      "status": "Delivered",
+      "paymentMethod": "",
+      "deliveryNo": "D023",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T14:04:25.537Z",
+      "deliveredAt": "2025-08-20T15:00:56.349Z"
+    },
+    {
+      "id": 24,
+      "basketNo": 24,
+      "shopName": "aa",
+      "customerName": "ilker arslanoglu",
+      "customerPhone": "07400233013",
+      "customerAddress": "85 Great Portland Street",
+      "customerPostcode": "W1W 7LT",
+      "totalAmount": "1",
+      "status": "Delivered",
+      "paymentMethod": "",
+      "deliveryNo": "D024",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T14:12:12.131Z",
+      "deliveredAt": "2025-08-20T15:00:57.599Z"
+    },
+    {
+      "id": 25,
+      "basketNo": 25,
+      "shopName": "aa",
+      "customerName": "ilker arslanoglu",
+      "customerPhone": "07400233013",
+      "customerAddress": "85 Great Portland Street",
+      "customerPostcode": "W1W 7LT",
+      "totalAmount": "0",
+      "status": "Delivered",
+      "paymentMethod": "",
+      "deliveryNo": "D025",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T14:41:13.646Z",
+      "deliveredAt": "2025-08-20T15:00:58.882Z"
+    },
+    {
+      "id": 26,
+      "basketNo": 26,
+      "shopName": "aa",
+      "customerName": "ilker arslanoglu",
+      "customerPhone": "07400233013",
+      "customerAddress": "85 Great Portland Street",
+      "customerPostcode": "W1W 7LT",
+      "totalAmount": "15",
+      "status": "Delivered",
+      "paymentMethod": "Cash",
+      "deliveryNo": "D026",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T14:41:42.785Z",
+      "deliveredAt": "2025-08-20T18:07:28.528Z"
+    },
+    {
+      "id": 27,
+      "basketNo": 27,
+      "shopName": "AK Grooming",
+      "customerName": "Serdar Akay",
+      "customerPhone": "+447415368459",
+      "customerAddress": "127d Above Bar S",
+      "customerPostcode": "SO14 7FN",
+      "totalAmount": "10",
+      "status": "Delivered",
+      "paymentMethod": "Cash",
+      "deliveryNo": "D027",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T15:01:27.821Z",
+      "deliveredAt": "2025-08-20T18:14:17.403Z"
+    },
+    {
+      "id": 28,
+      "basketNo": 28,
+      "shopName": "Alan's Barber",
+      "customerName": "",
+      "customerPhone": "+447473026239",
+      "customerAddress": "197 Old Chirstchurch ",
+      "customerPostcode": "BH1 1JU",
+      "totalAmount": "200",
+      "status": "Delivered",
+      "paymentMethod": "",
+      "deliveryNo": "D028",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T15:05:28.157Z",
+      "deliveredAt": "2025-08-20T17:18:12.066Z"
+    },
+    {
+      "id": 29,
+      "basketNo": 29,
+      "shopName": "First Class Barber",
+      "customerName": "Barzan",
+      "customerPhone": "+447492032480",
+      "customerAddress": "61 High Street , Cosham",
+      "customerPostcode": "PO6 3AX",
+      "totalAmount": "50",
+      "status": "Delivered",
+      "paymentMethod": "",
+      "deliveryNo": "D029",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T15:12:53.525Z",
+      "deliveredAt": "2025-08-20T18:14:21.139Z"
+    },
+    {
+      "id": 30,
+      "basketNo": 30,
+      "shopName": "aa",
+      "customerName": "ilker arslanoglu",
+      "customerPhone": "07400233013",
+      "customerAddress": "85 Great Portland Street",
+      "customerPostcode": "W1W 7LT",
+      "totalAmount": "100",
+      "status": "Cancelled",
+      "paymentMethod": "",
+      "deliveryNo": "D030",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T18:14:53.014Z",
+      "deliveredAt": null
+    },
+    {
+      "id": 31,
+      "basketNo": 31,
+      "shopName": "aa",
+      "customerName": "ilker arslanoglu",
+      "customerPhone": "07400233013",
+      "customerAddress": "85 Great Portland Street",
+      "customerPostcode": "W1W 7LT",
+      "totalAmount": "150",
+      "status": "Pending",
+      "paymentMethod": "",
+      "deliveryNo": "D031",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T18:14:58.661Z",
+      "deliveredAt": null
+    },
+    {
+      "id": 32,
+      "basketNo": 32,
+      "shopName": "aa",
+      "customerName": "ilker arslanoglu",
+      "customerPhone": "07400233013",
+      "customerAddress": "85 Great Portland Street",
+      "customerPostcode": "W1W 7LT",
+      "totalAmount": "200",
+      "status": "Pending",
+      "paymentMethod": "",
+      "deliveryNo": "D032",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T18:15:04.311Z",
+      "deliveredAt": null
+    },
+    {
+      "id": 33,
+      "basketNo": 33,
+      "shopName": "Istanbul Barber Eastligh",
+      "customerName": "Shanyar",
+      "customerPhone": "+447915138200",
+      "customerAddress": "19 High Street ",
+      "customerPostcode": "SO50 5LF",
+      "totalAmount": "100",
+      "status": "Pending",
+      "paymentMethod": "",
+      "deliveryNo": "D033",
+      "deliveryNotes": "",
+      "createdAt": "2025-08-20T18:30:27.286Z",
+      "deliveredAt": null
     }
   ],
   "customers": [
@@ -591,6 +783,42 @@
         "Card": 114,
         "Bank": 700.49
       }
+    },
+    {
+      "id": 20250819,
+      "date": "2025-08-19",
+      "totalRevenue": 100,
+      "totalOrders": 1,
+      "deliveredOrders": 1,
+      "pendingOrders": 0,
+      "inProcessOrders": 0,
+      "averageOrderValue": 100,
+      "topShop": "aa",
+      "topShopRevenue": 100,
+      "paymentBreakdown": {
+        "Balance": 0,
+        "Cash": 100,
+        "Card": 0,
+        "Bank": 0
+      }
+    },
+    {
+      "id": 20250820,
+      "date": "2025-08-20",
+      "totalRevenue": 876,
+      "totalOrders": 11,
+      "deliveredOrders": 7,
+      "pendingOrders": 3,
+      "inProcessOrders": 0,
+      "averageOrderValue": 79.63636363636364,
+      "topShop": "aa",
+      "topShopRevenue": 516,
+      "paymentBreakdown": {
+        "Balance": 0,
+        "Cash": 25,
+        "Card": 0,
+        "Bank": 0
+      }
     }
   ],
   "weeklySales": [
@@ -611,6 +839,24 @@
         "Card": 114,
         "Bank": 1065.99
       }
+    },
+    {
+      "id": 2025,
+      "week": "2025-W34",
+      "totalRevenue": 976,
+      "totalOrders": 12,
+      "deliveredOrders": 8,
+      "pendingOrders": 3,
+      "inProcessOrders": 0,
+      "averageOrderValue": 81.33333333333333,
+      "topShop": "aa",
+      "topShopRevenue": 616,
+      "paymentBreakdown": {
+        "Balance": 0,
+        "Cash": 125,
+        "Card": 0,
+        "Bank": 0
+      }
     }
   ],
   "predictions": [
@@ -618,7 +864,7 @@
       "id": 1,
       "type": "revenue",
       "timeframe": "tomorrow",
-      "predictedValue": 1444.8390000000002,
+      "predictedValue": 963.6,
       "confidence": 85,
       "factors": [
         "historical_trend",
@@ -631,26 +877,18 @@
     {
       "id": 1,
       "type": "comprehensive",
-      "date": "2025-08-10",
-      "totalRevenue": 2969.4799999999996,
-      "totalOrders": 21,
-      "averageOrderValue": 141.4038095238095,
-      "topShop": "AK Grooming",
+      "date": "2025-08-20",
+      "totalRevenue": 976,
+      "totalOrders": 12,
+      "averageOrderValue": 81.33333333333333,
+      "topShop": "aa",
       "paymentBreakdown": {
-        "Balance": 448.5,
-        "Cash": 1340.99,
-        "Card": 114,
-        "Bank": 1065.99
+        "Balance": 0,
+        "Cash": 125,
+        "Card": 0,
+        "Bank": 0
       }
     }
   ],
-  "notifications": [
-    {
-      "id": 1,
-      "type": "order_update",
-      "message": "Order #21 delivered successfully",
-      "timestamp": "2025-07-31T20:18:13.596Z",
-      "read": false
-    }
-  ]
+  "notifications": []
 }

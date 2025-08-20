@@ -38,6 +38,23 @@ const ComprehensiveAnalytics = () => {
     fetchAnalyticsData();
   }, []);
 
+  useEffect(() => {
+  // 1) Global event ile tetikleme (biz yayınlayacağız)
+  const refresh = () => fetchAnalyticsData();
+  window.addEventListener('orders:changed', refresh);
+
+  // 2) Socket.io’dan tetikleme (driver delivered vb. durumlar)
+  const s = window.__socket; // uygulamada merkezi socket varsa
+  if (s && s.on) {
+    s.on('order-updated', refresh);
+  }
+
+  return () => {
+    window.removeEventListener('orders:changed', refresh);
+    if (s && s.off) s.off('order-updated', refresh);
+  };
+}, []);
+
   const fetchAnalyticsData = async () => {
     try {
       console.log('📊 Fetching comprehensive analytics...');

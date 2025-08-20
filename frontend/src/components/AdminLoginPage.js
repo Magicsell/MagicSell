@@ -32,14 +32,14 @@ const AdminLoginPage = ({ onLogin }) => {
       if (credentials.username === 'admin' && credentials.password === 'admin123') {
         onLogin({ type: 'admin', username: 'admin' });
       } else {
-        setError('Invalid admin credentials. Use: admin / admin123');
+        setError('Invalid admin credentials.');
       }
     } else {
       // Driver authentication
       if (credentials.username === 'driver' && credentials.password === 'driver123') {
         onLogin({ type: 'driver', username: 'driver' });
       } else {
-        setError('Invalid driver credentials. Use: driver / driver123');
+        setError('Invalid driver credentials.');
       }
     }
   };
@@ -156,11 +156,11 @@ const AdminLoginPage = ({ onLogin }) => {
             </Button>
           </Box>
 
-          <Box sx={{ mt: 3, textAlign: 'center' }}>
+          {/* <Box sx={{ mt: 3, textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary">
               Demo Credentials: {getDemoCredentials()}
             </Typography>
-          </Box>
+          </Box> */}
         </CardContent>
       </Card>
     </Container>

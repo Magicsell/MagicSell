@@ -9,19 +9,28 @@ const PDFDocument = require('pdfkit');
 const DatabaseService = require('./databaseService');
 require('dotenv').config();
 
+const ALLOWED = (process.env.ALLOWED_ORIGINS || "http://localhost:3000")
+  .split(",")
+  .map(s => s.trim());
+
+
 const app = express();
+
+
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' 
-      ? ["https://magicroute.vercel.app"]
-      : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
-    methods: ["GET", "POST", "PUT", "DELETE"]
+    origin: ALLOWED,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
   }
 });
 
-// Mapbox token configuration
+  require('dotenv').config();
 const MAPBOX_TOKEN = process.env.MAPBOX_TOKEN;
+if (!MAPBOX_TOKEN) console.warn('⚠️ MAPBOX_TOKEN missing');
+// Mapbox token configuration
+
 
 // Security middleware
 app.use((req, res, next) => {
@@ -42,9 +51,7 @@ app.use((req, res, next) => {
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ["https://magicroute.vercel.app", "https://magicroute-git-main.vercel.app"]
-    : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
+  origin: ALLOWED,
   credentials: true
 }));
 app.use(express.json());
@@ -184,7 +191,7 @@ function recalculateAnalytics(orders) {
     const totalOrders = dayOrders.length;
     const deliveredOrders = dayOrders.filter(order => order.status === 'Delivered').length;
     const pendingOrders = dayOrders.filter(order => order.status === 'Pending').length;
-    const inProcessOrders = dayOrders.filter(order => order.status === 'In Process').length;
+    const inProcessOrders = dayOrders.filter(order => order.status === 'In Progress').length;
     
     // Calculate payment breakdown
     const paymentBreakdown = { Balance: 0, Cash: 0, Card: 0, Bank: 0 };
@@ -231,7 +238,7 @@ function recalculateAnalytics(orders) {
     const totalOrders = weekOrders.length;
     const deliveredOrders = weekOrders.filter(order => order.status === 'Delivered').length;
     const pendingOrders = weekOrders.filter(order => order.status === 'Pending').length;
-    const inProcessOrders = weekOrders.filter(order => order.status === 'In Process').length;
+    const inProcessOrders = weekOrders.filter(order => order.status === 'In Progress').length;
     
     // Calculate payment breakdown
     const paymentBreakdown = { Balance: 0, Cash: 0, Card: 0, Bank: 0 };
@@ -669,7 +676,7 @@ app.post('/api/optimize-route', async (req, res) => {
     const { startPostcode = "BH13 7EX", orders: requestOrders = [] } = req.body;
     const ordersToOptimize = requestOrders.length > 0 ? requestOrders : orders;
     const activeOrders = ordersToOptimize.filter(order => 
-      order.status === 'Pending' || order.status === 'In Process'
+      order.status === 'Pending' || order.status === 'In Progress'
     );
 
     console.log(`🔴 Route optimization requested for ${activeOrders.length} active orders`);
@@ -694,7 +701,18 @@ app.post('/api/optimize-route', async (req, res) => {
     }
 
     // Depot coordinates (Poole)
-    const depotCoords = { lng: -1.9876, lat: 50.7128 };
+    // const depotCoords = { lng: -1.9876, lat: 50.7128 };
+    let depotCoords = { lng: -1.9876, lat: 50.7128 }; // fallback
+if (startPostcode && MAPBOX_TOKEN) {
+  try {
+    const depotUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(startPostcode)}.json?access_token=${MAPBOX_TOKEN}&country=GB`;
+    const r = await axios.get(depotUrl);
+    if (r.data?.features?.length) {
+      const [lng, lat] = r.data.features[0].center;
+      depotCoords = { lng, lat };
+    }
+  } catch {}
+}
     console.log(`🔴 Depot coordinates: [${depotCoords.lng}, ${depotCoords.lat}]`);
 
     // Step 1: Geocode all postcodes
@@ -747,43 +765,75 @@ app.post('/api/optimize-route', async (req, res) => {
       });
     }
 
-    // Step 3: Calculate distances from depot and sort
-    const ordersWithDistance = validOrders.map(order => ({
-      ...order,
-      distanceFromDepot: calculateHaversineDistance(
-        depotCoords.lat, depotCoords.lng,
-        order.coordinates.lat, order.coordinates.lng
-      )
-    }));
+    // // Step 3: Calculate distances from depot and sort
+    // const ordersWithDistance = validOrders.map(order => ({
+    //   ...order,
+    //   distanceFromDepot: calculateHaversineDistance(
+    //     depotCoords.lat, depotCoords.lng,
+    //     order.coordinates.lat, order.coordinates.lng
+    //   )
+    // }));
 
-    // Sort by distance from depot (nearest first)
-    ordersWithDistance.sort((a, b) => a.distanceFromDepot - b.distanceFromDepot);
+    // // Sort by distance from depot (nearest first)
+    // ordersWithDistance.sort((a, b) => a.distanceFromDepot - b.distanceFromDepot);
 
-    console.log(`🔴 Orders sorted by distance from depot:`);
-    ordersWithDistance.forEach((order, index) => {
-      console.log(`  ${index + 1}. Order #${order.basketNo} (${order.customerPostcode}) - ${order.distanceFromDepot.toFixed(2)} km`);
-    });
+    // console.log(`🔴 Orders sorted by distance from depot:`);
+    // ordersWithDistance.forEach((order, index) => {
+    //   console.log(`  ${index + 1}. Order #${order.basketNo} (${order.customerPostcode}) - ${order.distanceFromDepot.toFixed(2)} km`);
+    // });
 
-    // Step 4: Build optimized route
-    const optimizedRoute = [];
-    let totalRouteDistance = 0;
-    let previousLocation = depotCoords;
+    // // Step 4: Build optimized route
+    // const optimizedRoute = [];
+    // let totalRouteDistance = 0;
+    // let previousLocation = depotCoords;
 
-    ordersWithDistance.forEach((order, index) => {
-      const distanceToOrder = calculateHaversineDistance(
-        previousLocation.lat, previousLocation.lng,
-        order.coordinates.lat, order.coordinates.lng
-      );
+    // ordersWithDistance.forEach((order, index) => {
+    //   const distanceToOrder = calculateHaversineDistance(
+    //     previousLocation.lat, previousLocation.lng,
+    //     order.coordinates.lat, order.coordinates.lng
+    //   );
       
-      order.routeDistance = distanceToOrder;
-      order.routeOrder = index + 1;
-      totalRouteDistance += distanceToOrder;
-      optimizedRoute.push(order);
+    //   order.routeDistance = distanceToOrder;
+    //   order.routeOrder = index + 1;
+    //   totalRouteDistance += distanceToOrder;
+    //   optimizedRoute.push(order);
       
-      console.log(`🚗 Route stop ${index + 1}: Order #${order.basketNo} (${order.customerPostcode}) - ${distanceToOrder.toFixed(2)} km`);
+    //   console.log(`🚗 Route stop ${index + 1}: Order #${order.basketNo} (${order.customerPostcode}) - ${distanceToOrder.toFixed(2)} km`);
       
-      previousLocation = order.coordinates;
-    });
+    //   previousLocation = order.coordinates;
+    // });
+
+    // Step 3+4: Nearest-Neighbor (depo -> her adımda en yakın sipariş)
+const remaining = [...validOrders];
+const optimizedRoute = [];
+let totalRouteDistance = 0;
+let previousLocation = depotCoords;
+
+while (remaining.length) {
+  let bestIdx = 0;
+  let bestDist = Infinity;
+
+  for (let i = 0; i < remaining.length; i++) {
+    const d = calculateHaversineDistance(
+      previousLocation.lat, previousLocation.lng,
+      remaining[i].coordinates.lat, remaining[i].coordinates.lng
+    );
+    if (d < bestDist) { bestDist = d; bestIdx = i; }
+  }
+
+  const next = remaining.splice(bestIdx, 1)[0];
+  next.routeDistance = isFinite(bestDist) ? bestDist : 0;
+  next.routeOrder = optimizedRoute.length + 1;
+  optimizedRoute.push(next);
+
+  console.log(`🚗 Route stop ${next.routeOrder}: Order #${next.basketNo} (${next.customerPostcode}) - ${next.routeDistance.toFixed(2)} km`);
+
+  totalRouteDistance += next.routeDistance;
+  previousLocation = next.coordinates;
+}
+
+console.log(`🔴 Nearest-neighbor route built with ${optimizedRoute.length} stops`);
+
 
     // Add orders without coordinates at the end
     const ordersWithoutCoordinates = ordersWithCoordinates.filter(order => !order.coordinates);
@@ -800,7 +850,7 @@ app.post('/api/optimize-route', async (req, res) => {
       route: optimizedRoute,
       totalDistance: Math.round(totalRouteDistance * 100) / 100,
       startPoint: startPostcode,
-      message: 'Route optimized successfully with distance-based sorting'
+      message: 'Route optimized successfully (nearest-neighbor)'
     });
 
   } catch (error) {
@@ -1159,7 +1209,7 @@ app.get('/api/analytics', (req, res) => {
     // Calculate comprehensive analytics
     const totalOrders = orders.length;
     const pendingOrders = orders.filter(order => order.status === 'Pending').length;
-    const inProcessOrders = orders.filter(order => order.status === 'In Process').length;
+    const inProcessOrders = orders.filter(order => order.status === 'In Progress').length;
     const deliveredOrders = orders.filter(order => order.status === 'Delivered').length;
     const cancelledOrders = orders.filter(order => order.status === 'Cancelled').length;
     

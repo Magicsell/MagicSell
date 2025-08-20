@@ -581,7 +581,7 @@ function App() {
   const calculateOrderAnalytics = () => {
     const totalOrders = orders.length;
     const pendingOrders = orders.filter(order => order.status === 'Pending').length;
-    const inProcessOrders = orders.filter(order => order.status === 'In Process').length;
+    const inProcessOrders = orders.filter(order => order.status === 'In Progress').length;
     const deliveredOrders = orders.filter(order => order.status === 'Delivered').length;
     const cancelledOrders = orders.filter(order => order.status === 'Cancelled').length;
     
@@ -766,7 +766,7 @@ function App() {
       
       // Check if there are orders to optimize
       const activeOrders = orders.filter(order => 
-        order.status === 'Pending' || order.status === 'In Process'
+        order.status === 'Pending' || order.status === 'In Progress'
       );
       
       if (activeOrders.length === 0) {
@@ -852,9 +852,9 @@ function App() {
       console.log('Generating route PDF...');
       console.log('API URL:', getApiUrl());
       
-      // Filter orders to only include Pending and In Process orders
+      // Filter orders to only include Pending and In Progress orders
       const activeOrders = orders.filter(order => 
-        order.status === 'Pending' || order.status === 'In Process'
+        order.status === 'Pending' || order.status === 'In Progress'
       );
       
       console.log('Orders to send:', activeOrders);
@@ -1151,7 +1151,7 @@ function App() {
                             label={order.status} 
                             color={
                               order.status === 'Delivered' ? 'success' : 
-                              order.status === 'In Process' ? 'info' : 
+                              order.status === 'In Progress' ? 'info' : 
                               'warning'
                             }
                             size="small"
@@ -1287,7 +1287,7 @@ function App() {
                 </Box>
               
               <MapComponent 
-                orders={orders.filter(order => order.status === 'Pending' || order.status === 'In Process')}
+                orders={orders.filter(order => order.status === 'Pending' || order.status === 'In Progress')}
                 optimizedRoute={optimizedRoute}
                 onRouteOptimized={(data) => {
                   console.log('Route optimized:', data);
@@ -1311,7 +1311,7 @@ function App() {
                 <Button 
                   variant="outlined" 
                   onClick={printRoute}
-                  disabled={orders.filter(order => order.status === 'Pending' || order.status === 'In Process').length === 0}
+                  disabled={orders.filter(order => order.status === 'Pending' || order.status === 'In Progress').length === 0}
                   sx={{ 
                     borderColor: '#4CAF50',
                     color: '#4CAF50',
@@ -1724,7 +1724,7 @@ function App() {
                               size="small"
                               color={
                                 order.status === 'Delivered' ? 'success' : 
-                                order.status === 'In Process' ? 'info' : 
+                                order.status === 'In Progress' ? 'info' : 
                                 'warning'
                               }
                             />
@@ -1988,7 +1988,7 @@ function App() {
                         label="📊 Status"
                       >
                         <MenuItem value="Pending">⏳ Pending</MenuItem>
-                        <MenuItem value="In Process">🔄 In Process</MenuItem>
+                        <MenuItem value="In Progress">🔄 In Progress</MenuItem>
                         <MenuItem value="Delivered">✅ Delivered</MenuItem>
                   </Select>
                 </FormControl>
@@ -2152,7 +2152,7 @@ function App() {
                         size="small"
                         color={
                           order.status === 'Delivered' ? 'success' : 
-                          order.status === 'In Process' ? 'info' : 
+                          order.status === 'In Progress' ? 'info' : 
                           'warning'
                         }
                       />

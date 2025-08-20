@@ -26,7 +26,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "vercel-build": "DISABLE_ESLINT_PLUGIN=true react-scripts build"
+    "vercel-build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
+    "start:lan": "cross-env HOST=0.0.0.0 PORT=3000 react-scripts start"
   },
   "eslintConfig": {
     "extends": [

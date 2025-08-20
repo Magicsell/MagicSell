@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Paper,
@@ -7,11 +7,22 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { QrCode2, Share, ContentCopy } from '@mui/icons-material';
 import QRCode from 'qrcode';
-import { Snackbar, Alert } from '@mui/material';
+
+// ---- Helpers ----
+const stripTrailingSlash = (s) => (s || '').replace(/\/+$/, '');
+const PUBLIC_ORIGIN =
+  stripTrailingSlash(process.env.REACT_APP_PUBLIC_ORIGIN) ||
+  stripTrailingSlash(window.location.origin);
+
+const buildDriverUrl = () => `${PUBLIC_ORIGIN}/?tab=3&driver=true`;
+const isLocalhostOrigin = () =>
+  /^(http|https):\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(PUBLIC_ORIGIN);
 
 const QRCodeGenerator = () => {
   const [showQR, setShowQR] = useState(false);
@@ -22,45 +33,60 @@ const QRCodeGenerator = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const generateQRCode = async () => {
-    // iPhone için özel format - Localhost kullan
-    const networkUrl = 'http://localhost:3000';
-    const driverUrl = `${networkUrl}?tab=3&driver=true`; // iPhone için query parameters
+    const driverUrl = buildDriverUrl();
     setQrCodeUrl(driverUrl);
-    
+
     try {
       const qrDataUrl = await QRCode.toDataURL(driverUrl, {
-        width: 350, // Samsung için optimal boyut
-        margin: 6, // Samsung için optimal margin
-        color: {
-          dark: '#000000',
-          light: '#FFFFFF'
-        },
-        errorCorrectionLevel: 'M', // Medium error correction for Samsung
+        width: 350,
+        margin: 6,
+        color: { dark: '#000000', light: '#FFFFFF' },
+        errorCorrectionLevel: 'M',
         type: 'image/png',
         quality: 0.9
       });
       setQrCodeDataUrl(qrDataUrl);
       setShowQR(true);
+
+      if (isLocalhostOrigin()) {
+        setSnackbarMessage(
+          'Uyarı: URL localhost. Telefonda çalışmaz. REACT_APP_PUBLIC_ORIGIN ile LAN IP veya canlı domain verin.'
+        );
+        setSnackbarSeverity('warning');
+        setShowSnackbar(true);
+      }
     } catch (err) {
       console.error('QR Code generation error:', err);
+      setSnackbarMessage('QR üretilemedi.');
+      setSnackbarSeverity('error');
+      setShowSnackbar(true);
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(qrCodeUrl);
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    setSnackbarMessage('Link panoya kopyalandı!');
+    setSnackbarSeverity('success');
+    setShowSnackbar(true);
   };
 
   const shareUrl = () => {
+    const url = buildDriverUrl();
     if (navigator.share) {
-      navigator.share({
-        title: 'MagicSell Driver App',
-        text: 'Access the driver delivery app',
-        url: qrCodeUrl
-      });
+      navigator
+        .share({
+          title: 'MagicSell Driver App',
+          text: 'Driver uygulamasını aç',
+          url
+        })
+        .catch(() => copyToClipboard(url));
     } else {
-      copyToClipboard();
+      copyToClipboard(url);
     }
   };
+
+  const baseUrl = PUBLIC_ORIGIN;
+  const iphoneUrl = buildDriverUrl();
 
   return (
     <Box sx={{ p: 2 }}>
@@ -69,50 +95,30 @@ const QRCodeGenerator = () => {
           📱 Quick Mobile Access
         </Typography>
         <Typography variant="body2" sx={{ mb: 2 }}>
-          iPhone için özel QR code - Kamera ile tara veya link paylaş
+          iPhone için QR kod — kamerayla tara veya link paylaş
         </Typography>
-        
+
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Button
-            variant="contained"
-            startIcon={<QrCode2 />}
-            onClick={generateQRCode}
-          >
+          <Button variant="contained" startIcon={<QrCode2 />} onClick={generateQRCode}>
             Show QR Code
           </Button>
-          
-          <Button
-            variant="outlined"
-            startIcon={<Share />}
-            onClick={shareUrl}
-          >
+
+          <Button variant="outlined" startIcon={<Share />} onClick={shareUrl}>
             Share Link
           </Button>
-          
+
           <Button
             variant="outlined"
             color="secondary"
-            onClick={() => {
-              const testUrl = 'http://localhost:3000?tab=3&driver=true';
-              navigator.clipboard.writeText(testUrl);
-              setSnackbarMessage('iPhone URL copied!');
-              setSnackbarSeverity('info');
-              setShowSnackbar(true);
-            }}
+            onClick={() => copyToClipboard(iphoneUrl)}
           >
             Copy iPhone URL
           </Button>
-          
+
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => {
-              const baseUrl = 'http://localhost:3000';
-              navigator.clipboard.writeText(baseUrl);
-              setSnackbarMessage('Base URL copied to clipboard!');
-              setSnackbarSeverity('info');
-              setShowSnackbar(true);
-            }}
+            onClick={() => copyToClipboard(baseUrl)}
           >
             Copy Base URL
           </Button>
@@ -120,51 +126,42 @@ const QRCodeGenerator = () => {
       </Paper>
 
       <Dialog open={showQR} onClose={() => setShowQR(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          📱 Driver App QR Code
-        </DialogTitle>
+        <DialogTitle>📱 Driver App QR Code</DialogTitle>
         <DialogContent>
           <Box sx={{ textAlign: 'center', p: 2 }}>
             <Typography variant="body2" sx={{ mb: 2 }}>
-              Scan this QR code with your phone camera to open the driver app
+              Telefon kamerasıyla bu kodu tarayın
             </Typography>
-            
-            {/* QR Code */}
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'center',
-              mb: 2
-            }}>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
               {qrCodeDataUrl ? (
-                <img 
-                  src={qrCodeDataUrl} 
-                  alt="QR Code for Driver App"
-                  style={{ width: 300, height: 300 }}
-                />
+                <img src={qrCodeDataUrl} alt="QR Code for Driver App" style={{ width: 300, height: 300 }} />
               ) : (
-                <Box sx={{ 
-                  width: 200, 
-                  height: 200, 
-                  border: '2px dashed #ccc', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center'
-                }}>
+                <Box
+                  sx={{
+                    width: 200,
+                    height: 200,
+                    border: '2px dashed #ccc',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
                   <Typography variant="body2" color="text.secondary">
-                QR Code Placeholder
-              </Typography>
+                    QR Code Placeholder
+                  </Typography>
                 </Box>
               )}
             </Box>
-            
+
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {qrCodeUrl}
             </Typography>
-            
+
             <Button
               variant="outlined"
               startIcon={<ContentCopy />}
-              onClick={copyToClipboard}
+              onClick={() => copyToClipboard(qrCodeUrl)}
               fullWidth
             >
               Copy Link
@@ -172,18 +169,11 @@ const QRCodeGenerator = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowQR(false)}>
-            Close
-          </Button>
+          <Button onClick={() => setShowQR(false)}>Close</Button>
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={showSnackbar}
-        autoHideDuration={3000}
-        onClose={() => setShowSnackbar(false)}
-      >
+      <Snackbar open={showSnackbar} autoHideDuration={3000} onClose={() => setShowSnackbar(false)}>
         <Alert severity={snackbarSeverity} onClose={() => setShowSnackbar(false)}>
           {snackbarMessage}
         </Alert>
@@ -192,4 +182,4 @@ const QRCodeGenerator = () => {
   );
 };
 
-export default QRCodeGenerator; 
+export default QRCodeGenerator;

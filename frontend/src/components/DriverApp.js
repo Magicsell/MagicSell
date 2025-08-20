@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Paper,
@@ -25,8 +25,8 @@ import {
   Toolbar,
   Tabs,
   Tab,
-  Grid
-} from '@mui/material';
+  Grid,
+} from "@mui/material";
 import {
   LocationOn,
   Phone,
@@ -47,47 +47,55 @@ import {
   Menu,
   Map,
   List as ListIcon,
-  Dashboard
-} from '@mui/icons-material';
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem
-} from '@mui/material';
+  Dashboard,
+} from "@mui/icons-material";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
-const DriverApp = ({ orders, onOrderStatusUpdate, optimizedRoute, onRouteOptimize }) => {
+const DriverApp = ({
+  orders,
+  onOrderStatusUpdate,
+  optimizedRoute,
+  onRouteOptimize,
+}) => {
   const [currentOrderIndex, setCurrentOrderIndex] = useState(0);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [deliveryNotes, setDeliveryNotes] = useState('');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+  const [deliveryNotes, setDeliveryNotes] = useState("");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState(0); // 0: Orders, 1: Route
+  // driver ekranında anında yansıtmak için lokal statü override
+  const [localStatuses, setLocalStatuses] = useState({}); // { [orderId]: 'Delivered' | ... }
+
+  // tek bir yerden etkin statüyü oku
+  const getStatus = (order) => localStatuses[order.id] ?? order.status;
 
   // Filter pending orders for delivery
-  const pendingOrders = orders.filter(order => order.status === 'Pending' || order.status === 'In Process');
+  const pendingOrders = orders.filter((order) => {
+    const s = getStatus(order);
+    return s === "Pending" || s === "In Progress";
+  });
 
   // Log orders changes for debugging
   useEffect(() => {
-    console.log('🚚 DriverApp: Orders updated:', orders.length, 'total orders');
-    console.log('🚚 DriverApp: Pending orders:', pendingOrders.length);
-    console.log('🚚 DriverApp: Current order index:', currentOrderIndex);
-    
+    console.log("🚚 DriverApp: Orders updated:", orders.length, "total orders");
+    console.log("🚚 DriverApp: Pending orders:", pendingOrders.length);
+    console.log("🚚 DriverApp: Current order index:", currentOrderIndex);
+
     // Reset currentOrderIndex if it's out of bounds
     if (currentOrderIndex >= pendingOrders.length && pendingOrders.length > 0) {
-      console.log('🔄 Resetting currentOrderIndex to 0');
+      console.log("🔄 Resetting currentOrderIndex to 0");
       setCurrentOrderIndex(0);
     }
-    
+
     // If no pending orders, reset to 0
     if (pendingOrders.length === 0) {
-      console.log('🔄 No pending orders, resetting currentOrderIndex to 0');
+      console.log("🔄 No pending orders, resetting currentOrderIndex to 0");
       setCurrentOrderIndex(0);
     }
   }, [orders, pendingOrders, currentOrderIndex]);
@@ -95,22 +103,25 @@ const DriverApp = ({ orders, onOrderStatusUpdate, optimizedRoute, onRouteOptimiz
   useEffect(() => {
     // Check if user is on mobile
     const checkMobile = () => {
-      const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const mobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
       setIsMobile(mobile);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
     // PWA install prompt
-    window.addEventListener('beforeinstallprompt', (e) => {
+    window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
       setShowInstallPrompt(true);
     });
 
     return () => {
-      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener("resize", checkMobile);
     };
   }, []);
 
@@ -118,96 +129,121 @@ const DriverApp = ({ orders, onOrderStatusUpdate, optimizedRoute, onRouteOptimiz
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setSnackbarMessage('Driver app installed successfully!');
-        setSnackbarSeverity('success');
+      if (outcome === "accepted") {
+        setSnackbarMessage("Driver app installed successfully!");
+        setSnackbarSeverity("success");
         setShowSnackbar(true);
       }
       setDeferredPrompt(null);
       setShowInstallPrompt(false);
     }
   };
+  const handleOrderStatusUpdate = async (
+    orderId,
+    newStatus,
+    notes = "",
+    paymentMethod = null
+  ) => {
+    console.log("🚚 DriverApp: handleOrderStatusUpdate called with:", {
+      orderId,
+      newStatus,
+      notes,
+      paymentMethod,
+    });
 
-  const handleOrderStatusUpdate = (orderId, newStatus, notes = '', paymentMethod = null) => {
-    console.log('🚚 DriverApp: handleOrderStatusUpdate called with:', { orderId, newStatus, notes, paymentMethod });
-    
-    if (onOrderStatusUpdate) {
-      onOrderStatusUpdate(orderId, newStatus, notes, paymentMethod);
-    }
-    
-    // If order is delivered, move to next order after a short delay
-    if (newStatus === 'Delivered') {
-      setTimeout(() => {
-        const currentPendingOrders = orders.filter(order => order.status === 'Pending' || order.status === 'In Process');
-        if (currentPendingOrders.length > 0) {
-          // Find the next order that's not the current one
-          const nextOrderIndex = currentPendingOrders.findIndex(order => order.id !== orderId);
-          if (nextOrderIndex >= 0) {
-            setCurrentOrderIndex(nextOrderIndex);
-            console.log('🔄 Moving to next order after delivery');
+    try {
+      // backend'e yaz
+      if (onOrderStatusUpdate) {
+        await onOrderStatusUpdate(orderId, newStatus, notes, paymentMethod);
+      }
+
+      // 👇 anında UI güncelle (sayaç/listeler getStatus üzerinden hesaplanıyor)
+      setLocalStatuses((prev) => ({ ...prev, [orderId]: newStatus }));
+
+      // diğer ekranlara sinyal (admin/analytics dinliyorsa)
+      window.dispatchEvent(new Event("orders:changed"));
+
+      if (newStatus === "Delivered") {
+        setTimeout(() => {
+          const currentPendingOrders = orders.filter((o) => {
+            const s = getStatus(o);
+            return s === "Pending" || s === "In Progress";
+          });
+          if (currentPendingOrders.length > 0) {
+            const nextOrderIndex = currentPendingOrders.findIndex(
+              (o) => o.id !== orderId
+            );
+            setCurrentOrderIndex(nextOrderIndex >= 0 ? nextOrderIndex : 0);
+            console.log("🔄 Moving to next order after delivery");
           } else {
             setCurrentOrderIndex(0);
-            console.log('🔄 Moving to first order after delivery');
           }
-        }
-      }, 1000); // 1 second delay to show success message
+        }, 800);
+      }
+
+      setSnackbarMessage(`Order ${newStatus.toLowerCase()} successfully!`);
+      setSnackbarSeverity("success");
+      setShowSnackbar(true);
+    } catch (err) {
+      console.error("❌ Status update failed:", err);
+      setSnackbarMessage("Failed to update order status");
+      setSnackbarSeverity("error");
+      setShowSnackbar(true);
     }
-    
-    setSnackbarMessage(`Order ${newStatus.toLowerCase()} successfully!`);
-    setSnackbarSeverity('success');
-    setShowSnackbar(true);
   };
 
   const handleCallCustomer = (phone) => {
-    console.log('📞 Calling customer:', phone);
+    console.log("📞 Calling customer:", phone);
     if (phone) {
-      window.open(`tel:${phone}`, '_blank');
+      window.open(`tel:${phone}`, "_blank");
     } else {
-      setSnackbarMessage('No phone number available');
-      setSnackbarSeverity('warning');
+      setSnackbarMessage("No phone number available");
+      setSnackbarSeverity("warning");
       setShowSnackbar(true);
     }
   };
 
   const handleGetDirections = (address, postcode) => {
-    console.log('🗺️ Getting directions to:', address, postcode);
+    console.log("🗺️ Getting directions to:", address, postcode);
     if (address && postcode) {
       const fullAddress = `${address}, ${postcode}`;
       const encodedAddress = encodeURIComponent(fullAddress);
-      window.open(`https://maps.google.com/maps?q=${encodedAddress}`, '_blank');
+      window.open(`https://maps.google.com/maps?q=${encodedAddress}`, "_blank");
     } else {
-      setSnackbarMessage('Address information incomplete');
-      setSnackbarSeverity('warning');
+      setSnackbarMessage("Address information incomplete");
+      setSnackbarSeverity("warning");
       setShowSnackbar(true);
     }
   };
 
   const handleShareOrder = (order) => {
-    console.log('📤 Sharing order:', order);
+    console.log("📤 Sharing order:", order);
     const orderInfo = `
 Order #${order.basketNo}
-Shop: ${order.shopName || 'N/A'}
-Customer: ${order.customerName || 'N/A'}
-Address: ${order.customerAddress || 'N/A'}
-Postcode: ${order.customerPostcode || 'N/A'}
-Amount: £${order.totalAmount || 'N/A'}
+Shop: ${order.shopName || "N/A"}
+Customer: ${order.customerName || "N/A"}
+Address: ${order.customerAddress || "N/A"}
+Postcode: ${order.customerPostcode || "N/A"}
+Amount: £${order.totalAmount || "N/A"}
     `.trim();
-    
+
     if (navigator.share) {
-      navigator.share({
-        title: `Order #${order.basketNo}`,
-        text: orderInfo
-      }).catch(error => {
-        console.log('Share failed, falling back to clipboard');
-        navigator.clipboard.writeText(orderInfo);
-        setSnackbarMessage('Order details copied to clipboard!');
-        setSnackbarSeverity('info');
-        setShowSnackbar(true);
-      });
+      navigator
+        .share({
+          title: `Order #${order.basketNo}`,
+          text: orderInfo,
+        })
+        .catch((error) => {
+          console.log("Share failed, falling back to clipboard");
+          navigator.clipboard.writeText(orderInfo);
+          setSnackbarMessage("Order details copied to clipboard!");
+          setSnackbarSeverity("info");
+          setShowSnackbar(true);
+        });
     } else {
       navigator.clipboard.writeText(orderInfo);
-      setSnackbarMessage('Order details copied to clipboard!');
-      setSnackbarSeverity('info');
+      setSnackbarMessage("Order details copied to clipboard!");
+      setSnackbarSeverity("info");
       setShowSnackbar(true);
     }
   };
@@ -238,8 +274,8 @@ Date: _____________________
 
 Thank you for choosing MagicSell!
     `.trim();
-    
-    const printWindow = window.open('', '_blank');
+
+    const printWindow = window.open("", "_blank");
     printWindow.document.write(`
       <html>
         <head>
@@ -266,15 +302,15 @@ Thank you for choosing MagicSell!
   const handlePrintRoute = () => {
     const route = optimizedRoute || [];
     if (route.length === 0) {
-      setSnackbarMessage('No route to print');
-      setSnackbarSeverity('warning');
+      setSnackbarMessage("No route to print");
+      setSnackbarSeverity("warning");
       setShowSnackbar(true);
       return;
     }
 
-    const printWindow = window.open('', '_blank');
-    const today = new Date().toLocaleDateString('en-GB');
-    
+    const printWindow = window.open("", "_blank");
+    const today = new Date().toLocaleDateString("en-GB");
+
     const routeContent = `
       <!DOCTYPE html>
       <html>
@@ -559,40 +595,46 @@ Thank you for choosing MagicSell!
           <div class="orders-section">
             <h2 class="section-title">Delivery Orders</h2>
             
-                         ${route.map((order, index) => `
+                         ${route
+                           .map(
+                             (order, index) => `
               <div class="order-item">
                 <div class="order-header">
-                  <div class="order-number">Stop ${index + 1} - Order #${order.basketNo}</div>
+                  <div class="order-number">Stop ${index + 1} - Order #${
+                               order.basketNo
+                             }</div>
                   <div class="order-status">${order.status}</div>
                 </div>
                 <div class="order-content">
                   <div class="customer-info">
-                    <div class="shop-name">${order.shopName || 'N/A'}</div>
+                    <div class="shop-name">${order.shopName || "N/A"}</div>
                     <div class="customer-details">
                       <div class="detail-item">
                         <span class="detail-icon">👤</span>
-                        <span>${order.customerName || 'N/A'}</span>
+                        <span>${order.customerName || "N/A"}</span>
                       </div>
                       <div class="detail-item">
                         <span class="detail-icon">📞</span>
-                        <span>${order.customerPhone || 'N/A'}</span>
+                        <span>${order.customerPhone || "N/A"}</span>
                       </div>
                       <div class="detail-item">
                         <span class="detail-icon">📍</span>
-                        <span>${order.customerAddress || 'N/A'}</span>
+                        <span>${order.customerAddress || "N/A"}</span>
                       </div>
                       <div class="detail-item">
                         <span class="detail-icon">📮</span>
-                        <span>${order.customerPostcode || 'N/A'}</span>
+                        <span>${order.customerPostcode || "N/A"}</span>
                       </div>
                     </div>
                   </div>
                   <div class="order-amount">
-                    💰 £${order.totalAmount || '0.00'}
+                    💰 £${order.totalAmount || "0.00"}
                   </div>
                 </div>
               </div>
-            `).join('')}
+            `
+                           )
+                           .join("")}
           </div>
           
           <div class="footer">
@@ -617,13 +659,22 @@ Thank you for choosing MagicSell!
       {currentOrder && (
         <Card elevation={3} sx={{ mb: 2 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
               <Typography variant="h6" color="primary">
                 📦 Order #{currentOrder.basketNo}
               </Typography>
-              <Chip 
-                label={currentOrder.status} 
-                color={currentOrder.status === 'Pending' ? 'warning' : 'info'}
+              <Chip
+                label={getStatus(currentOrder)}
+                color={
+                  getStatus(currentOrder) === "Pending" ? "warning" : "info"
+                }
                 size="small"
               />
             </Box>
@@ -635,7 +686,11 @@ Thank you for choosing MagicSell!
               <Typography variant="body2" color="text.secondary">
                 📞 {currentOrder.customerPhone}
               </Typography>
-              <Typography variant="body2" color="primary" sx={{ fontWeight: 'bold', mt: 1 }}>
+              <Typography
+                variant="body2"
+                color="primary"
+                sx={{ fontWeight: "bold", mt: 1 }}
+              >
                 🏪 {currentOrder.shopName}
               </Typography>
             </Box>
@@ -649,17 +704,26 @@ Thank you for choosing MagicSell!
               </Typography>
             </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
               <Typography variant="h6" color="success.main">
                 💰 £{currentOrder.totalAmount}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                🚚 {currentOrder.deliveryNo || 'D' + currentOrder.basketNo.toString().padStart(3, '0')}
+                🚚{" "}
+                {currentOrder.deliveryNo ||
+                  "D" + currentOrder.basketNo.toString().padStart(3, "0")}
               </Typography>
             </Box>
 
             {/* Action Buttons */}
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2 }}>
               <Button
                 variant="contained"
                 startIcon={<Phone />}
@@ -668,16 +732,21 @@ Thank you for choosing MagicSell!
               >
                 Call
               </Button>
-              
+
               <Button
                 variant="outlined"
                 startIcon={<Directions />}
-                onClick={() => handleGetDirections(currentOrder.customerAddress, currentOrder.customerPostcode)}
+                onClick={() =>
+                  handleGetDirections(
+                    currentOrder.customerAddress,
+                    currentOrder.customerPostcode
+                  )
+                }
                 sx={{ flex: 1, minWidth: 120 }}
               >
                 Directions
               </Button>
-              
+
               <Button
                 variant="outlined"
                 startIcon={<Share />}
@@ -689,7 +758,7 @@ Thank you for choosing MagicSell!
             </Box>
 
             {/* Navigation Buttons */}
-            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
               <Button
                 variant="outlined"
                 startIcon={<NavigateBefore />}
@@ -697,21 +766,33 @@ Thank you for choosing MagicSell!
                 onClick={() => {
                   const newIndex = Math.max(0, currentOrderIndex - 1);
                   setCurrentOrderIndex(newIndex);
-                  console.log('🔄 Navigated to previous order, new index:', newIndex);
+                  console.log(
+                    "🔄 Navigated to previous order, new index:",
+                    newIndex
+                  );
                 }}
                 fullWidth
               >
                 Previous ({currentOrderIndex + 1} of {pendingOrders.length})
               </Button>
-              
+
               <Button
                 variant="outlined"
                 startIcon={<NavigateNext />}
-                disabled={currentOrderIndex >= pendingOrders.length - 1 || pendingOrders.length === 0}
+                disabled={
+                  currentOrderIndex >= pendingOrders.length - 1 ||
+                  pendingOrders.length === 0
+                }
                 onClick={() => {
-                  const newIndex = Math.min(pendingOrders.length - 1, currentOrderIndex + 1);
+                  const newIndex = Math.min(
+                    pendingOrders.length - 1,
+                    currentOrderIndex + 1
+                  );
                   setCurrentOrderIndex(newIndex);
-                  console.log('🔄 Navigated to next order, new index:', newIndex);
+                  console.log(
+                    "🔄 Navigated to next order, new index:",
+                    newIndex
+                  );
                 }}
                 fullWidth
               >
@@ -720,29 +801,29 @@ Thank you for choosing MagicSell!
             </Box>
 
             {/* Delivery Actions */}
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ display: "flex", gap: 2 }}>
               <Button
                 variant="contained"
                 color="success"
                 startIcon={<CheckCircle />}
                 onClick={() => {
-                  console.log('✅ Marking order as delivered:', currentOrder);
+                  console.log("✅ Marking order as delivered:", currentOrder);
                   setSelectedOrder(currentOrder);
-                  setSelectedPaymentMethod(currentOrder.paymentMethod || '');
+                  setSelectedPaymentMethod(currentOrder.paymentMethod || "");
                   setShowOrderDetails(true);
                 }}
                 fullWidth
               >
                 Mark Delivered
               </Button>
-              
+
               <Button
                 variant="contained"
                 color="error"
                 startIcon={<Cancel />}
                 onClick={() => {
-                  console.log('❌ Cancelling order:', currentOrder);
-                  handleOrderStatusUpdate(currentOrder.id, 'Cancelled');
+                  console.log("❌ Cancelling order:", currentOrder);
+                  handleOrderStatusUpdate(currentOrder.id, "Cancelled");
                 }}
                 fullWidth
               >
@@ -756,7 +837,7 @@ Thank you for choosing MagicSell!
       {/* No Orders Message */}
       {pendingOrders.length === 0 && (
         <Card elevation={3}>
-          <CardContent sx={{ textAlign: 'center', py: 4 }}>
+          <CardContent sx={{ textAlign: "center", py: 4 }}>
             <Typography variant="h6" color="text.secondary" gutterBottom>
               🎉 No Pending Orders!
             </Typography>
@@ -772,12 +853,19 @@ Thank you for choosing MagicSell!
   const renderRouteView = () => {
     // Güvenli kontrol - optimizedRoute undefined olabilir
     const route = optimizedRoute || [];
-    
+
     return (
       <Box>
         <Card elevation={3}>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
               <Typography variant="h6" gutterBottom>
                 🗺️ Route Overview
               </Typography>
@@ -787,11 +875,13 @@ Thank you for choosing MagicSell!
                   startIcon={<Print />}
                   onClick={handlePrintRoute}
                   sx={{
-                    background: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
-                    '&:hover': {
-                      background: 'linear-gradient(45deg, #5a6fd8 0%, #6a4190 100%)',
-                    }
+                    background:
+                      "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
+                    color: "white",
+                    "&:hover": {
+                      background:
+                        "linear-gradient(45deg, #5a6fd8 0%, #6a4190 100%)",
+                    },
                   }}
                 >
                   🖨️ Print Route
@@ -799,71 +889,131 @@ Thank you for choosing MagicSell!
               )}
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {route.length > 0 ? `${route.length} stops optimized` : 'No route optimized yet'}
+              {route.length > 0
+                ? `${route.length} stops optimized`
+                : "No route optimized yet"}
             </Typography>
-            
+
             {route.length > 0 ? (
               <Box>
                 {route.map((order, index) => (
-                  <Card key={order.id} elevation={2} sx={{ 
-                    mb: 2,
-                    background: index === currentOrderIndex 
-                      ? 'linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%)' 
-                      : 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                    border: index === currentOrderIndex ? '2px solid #667eea' : '1px solid #dee2e6',
-                    borderRadius: 2,
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 8px 25px rgba(0,0,0,0.15)'
-                    }
-                  }}>
+                  <Card
+                    key={order.id}
+                    elevation={2}
+                    sx={{
+                      mb: 2,
+                      background:
+                        index === currentOrderIndex
+                          ? "linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%)"
+                          : "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+                      border:
+                        index === currentOrderIndex
+                          ? "2px solid #667eea"
+                          : "1px solid #dee2e6",
+                      borderRadius: 2,
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
+                      },
+                    }}
+                  >
                     <CardContent sx={{ p: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          mb: 1,
+                        }}
+                      >
                         <Box sx={{ flex: 1 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <Box sx={{ 
-                              width: 32, 
-                              height: 32, 
-                              borderRadius: '50%', 
-                              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                              color: 'white',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '0.9em',
-                              fontWeight: 'bold',
-                              mr: 2
-                            }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              mb: 1,
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: "50%",
+                                background:
+                                  "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                                color: "white",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "0.9em",
+                                fontWeight: "bold",
+                                mr: 2,
+                              }}
+                            >
                               {index + 1}
                             </Box>
-                            <Typography variant="h6" fontWeight="bold" color="primary">
+                            <Typography
+                              variant="h6"
+                              fontWeight="bold"
+                              color="primary"
+                            >
                               Order #{order.basketNo}
                             </Typography>
                           </Box>
-                          
+
                           <Box sx={{ ml: 4 }}>
-                            <Typography variant="body1" fontWeight="bold" color="primary" sx={{ mb: 0.5 }}>
+                            <Typography
+                              variant="body1"
+                              fontWeight="bold"
+                              color="primary"
+                              sx={{ mb: 0.5 }}
+                            >
                               🏪 {order.shopName}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ mb: 0.5 }}
+                            >
                               👤 {order.customerName}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ mb: 0.5 }}
+                            >
                               📍 {order.customerAddress}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ mb: 1 }}
+                            >
                               📮 {order.customerPostcode}
                             </Typography>
-                            
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <Chip 
-                                label={order.status} 
-                                color={order.status === 'Pending' ? 'warning' : 'info'}
+
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                            >
+                              <Chip
+                                label={getStatus(order)}
+                                color={
+                                  getStatus(order) === "Pending"
+                                    ? "warning"
+                                    : "info"
+                                }
                                 size="small"
-                                sx={{ fontWeight: 'bold' }}
                               />
-                              <Typography variant="body2" fontWeight="bold" color="success.main">
+                              <Typography
+                                variant="body2"
+                                fontWeight="bold"
+                                color="success.main"
+                              >
                                 💰 £{order.totalAmount}
                               </Typography>
                             </Box>
@@ -875,9 +1025,10 @@ Thank you for choosing MagicSell!
                 ))}
               </Box>
             ) : (
-              <Box sx={{ textAlign: 'center', py: 3 }}>
+              <Box sx={{ textAlign: "center", py: 3 }}>
                 <Typography variant="body2" color="text.secondary">
-                  No optimized route available. Contact admin to optimize your route.
+                  No optimized route available. Contact admin to optimize your
+                  route.
                 </Typography>
               </Box>
             )}
@@ -888,15 +1039,26 @@ Thank you for choosing MagicSell!
   };
 
   return (
-    <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
+    <Box sx={{ p: 2, maxWidth: 600, mx: "auto" }}>
       {/* Mobile App Bar */}
       {isMobile && (
-        <AppBar position="fixed" top="auto" bottom={0} sx={{ top: 'auto', bottom: 0 }}>
-          <Toolbar sx={{ justifyContent: 'space-around' }}>
-            <IconButton color="inherit" onClick={() => window.location.href = '/'}>
+        <AppBar
+          position="fixed"
+          top="auto"
+          bottom={0}
+          sx={{ top: "auto", bottom: 0 }}
+        >
+          <Toolbar sx={{ justifyContent: "space-around" }}>
+            <IconButton
+              color="inherit"
+              onClick={() => (window.location.href = "/")}
+            >
               <Home />
             </IconButton>
-            <Typography variant="body2" sx={{ flexGrow: 1, textAlign: 'center' }}>
+            <Typography
+              variant="body2"
+              sx={{ flexGrow: 1, textAlign: "center" }}
+            >
               Driver App
             </Typography>
             {showInstallPrompt && (
@@ -910,12 +1072,21 @@ Thank you for choosing MagicSell!
 
       {/* Install Prompt */}
       {showInstallPrompt && (
-        <Paper elevation={3} sx={{ p: 2, mb: 2, background: 'linear-gradient(45deg, #4CAF50 0%, #45a049 100%)', color: 'white' }}>
+        <Paper
+          elevation={3}
+          sx={{
+            p: 2,
+            mb: 2,
+            background: "linear-gradient(45deg, #4CAF50 0%, #45a049 100%)",
+            color: "white",
+          }}
+        >
           <Typography variant="h6" gutterBottom>
             📱 Install Driver App
           </Typography>
           <Typography variant="body2" sx={{ mb: 2 }}>
-            Install this app on your phone for quick access and offline functionality!
+            Install this app on your phone for quick access and offline
+            functionality!
           </Typography>
           <Button
             variant="contained"
@@ -930,15 +1101,24 @@ Thank you for choosing MagicSell!
       )}
 
       {/* Header */}
-      <Paper elevation={3} sx={{ p: 2, mb: 2, background: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 2,
+          mb: 2,
+          background: "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
+          color: "white",
+        }}
+      >
         <Typography variant="h5" gutterBottom>
           🚚 Driver Delivery App
         </Typography>
         <Typography variant="body2">
-          {pendingOrders.length} orders pending • Order {currentOrderIndex + 1} of {pendingOrders.length}
+          {pendingOrders.length} orders pending • Order {currentOrderIndex + 1}{" "}
+          of {pendingOrders.length}
         </Typography>
         {isMobile && (
-          <Typography variant="caption" sx={{ display: 'block', mt: 1 }}>
+          <Typography variant="caption" sx={{ display: "block", mt: 1 }}>
             📱 Mobile Optimized • Swipe to navigate
           </Typography>
         )}
@@ -946,27 +1126,19 @@ Thank you for choosing MagicSell!
 
       {/* Tab Navigation */}
       <Box sx={{ mb: 2 }}>
-        <Tabs 
-          value={activeTab} 
+        <Tabs
+          value={activeTab}
           onChange={(e, newValue) => setActiveTab(newValue)}
           centered
-          sx={{ 
-            '& .MuiTab-root': {
+          sx={{
+            "& .MuiTab-root": {
               minWidth: 120,
-              fontSize: '0.9rem'
-            }
+              fontSize: "0.9rem",
+            },
           }}
         >
-          <Tab 
-            icon={<ListIcon />} 
-            label="Orders" 
-            iconPosition="start"
-          />
-          <Tab 
-            icon={<Map />} 
-            label="Route" 
-            iconPosition="start"
-          />
+          <Tab icon={<ListIcon />} label="Orders" iconPosition="start" />
+          <Tab icon={<Map />} label="Route" iconPosition="start" />
         </Tabs>
       </Box>
 
@@ -975,14 +1147,22 @@ Thank you for choosing MagicSell!
       {activeTab === 1 && renderRouteView()}
 
       {/* Order Details Dialog */}
-      <Dialog open={showOrderDetails} onClose={() => setShowOrderDetails(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={showOrderDetails}
+        onClose={() => setShowOrderDetails(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
           Complete Delivery - Order #{selectedOrder?.basketNo}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ mb: 3 }}>
             <Typography variant="h6" gutterBottom>
-              💳 Payment Method {!selectedPaymentMethod && <span style={{color: 'red'}}>*</span>}
+              💳 Payment Method{" "}
+              {!selectedPaymentMethod && (
+                <span style={{ color: "red" }}>*</span>
+              )}
             </Typography>
             <FormControl fullWidth>
               <InputLabel>Select Payment Method</InputLabel>
@@ -1000,12 +1180,16 @@ Thank you for choosing MagicSell!
               </Select>
             </FormControl>
             {!selectedPaymentMethod && (
-              <Typography variant="caption" color="error" sx={{ mt: 1, display: 'block' }}>
+              <Typography
+                variant="caption"
+                color="error"
+                sx={{ mt: 1, display: "block" }}
+              >
                 ⚠️ Payment method is required to complete delivery
               </Typography>
             )}
           </Box>
-          
+
           <TextField
             fullWidth
             multiline
@@ -1018,11 +1202,13 @@ Thank you for choosing MagicSell!
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => {
-            setShowOrderDetails(false);
-            setDeliveryNotes('');
-            setSelectedPaymentMethod('');
-          }}>
+          <Button
+            onClick={() => {
+              setShowOrderDetails(false);
+              setDeliveryNotes("");
+              setSelectedPaymentMethod("");
+            }}
+          >
             Cancel
           </Button>
           <Button
@@ -1030,19 +1216,24 @@ Thank you for choosing MagicSell!
             color="success"
             disabled={!selectedPaymentMethod}
             onClick={() => {
-              console.log('🚚 Driver completing delivery:', {
+              console.log("🚚 Driver completing delivery:", {
                 orderId: selectedOrder.id,
                 paymentMethod: selectedPaymentMethod,
-                notes: deliveryNotes
+                notes: deliveryNotes,
               });
-              
+
               // Update order with payment method and delivery notes
-              handleOrderStatusUpdate(selectedOrder.id, 'Delivered', deliveryNotes, selectedPaymentMethod);
+              handleOrderStatusUpdate(
+                selectedOrder.id,
+                "Delivered",
+                deliveryNotes,
+                selectedPaymentMethod
+              );
               setShowOrderDetails(false);
-              setDeliveryNotes('');
-              setSelectedPaymentMethod('');
+              setDeliveryNotes("");
+              setSelectedPaymentMethod("");
               if (currentOrderIndex < pendingOrders.length - 1) {
-                setCurrentOrderIndex(prev => prev + 1);
+                setCurrentOrderIndex((prev) => prev + 1);
               }
             }}
           >
@@ -1055,7 +1246,7 @@ Thank you for choosing MagicSell!
       <Fab
         color="primary"
         aria-label="quick actions"
-        sx={{ position: 'fixed', bottom: isMobile ? 80 : 16, right: 16 }}
+        sx={{ position: "fixed", bottom: isMobile ? 80 : 16, right: 16 }}
         onClick={() => {
           if (currentOrder) {
             handlePrintReceipt(currentOrder);
@@ -1071,7 +1262,10 @@ Thank you for choosing MagicSell!
         autoHideDuration={3000}
         onClose={() => setShowSnackbar(false)}
       >
-        <Alert severity={snackbarSeverity} onClose={() => setShowSnackbar(false)}>
+        <Alert
+          severity={snackbarSeverity}
+          onClose={() => setShowSnackbar(false)}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
@@ -1079,4 +1273,4 @@ Thank you for choosing MagicSell!
   );
 };
 
-export default DriverApp; 
+export default DriverApp;

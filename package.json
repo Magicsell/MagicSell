@@ -2,6 +2,7 @@
   "name": "magicsell",
   "version": "1.0.0",
   "private": true,
+  "homepage": ".",
   "description": "MagicSell - Sales and Delivery Management System",
   "main": "api/index.js",
   "scripts": {

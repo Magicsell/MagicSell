@@ -1,5 +1,6 @@
 {
   "name": "magicsell-api",
+  "homepage": ".",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {

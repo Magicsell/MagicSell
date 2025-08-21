@@ -1927,7 +1927,7 @@ function App() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {(isFiltered ? filteredOrders : orders)
+                            {((isFiltered ? filteredOrders : orders)??[])
                               .filter((order) => {
                                 // Driver için sadece Pending ve In Progress siparişleri göster
                                 if (currentUser?.type === "driver") {

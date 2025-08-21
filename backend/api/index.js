@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
@@ -7,15 +8,55 @@ const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
 const DatabaseService = require('../databaseService');
-require('dotenv').config();
+
+
+const ALLOWED_LIST = [
+  'http://localhost:3000',
+  'https://magic-sell-frontend.vercel.app',   // Vercel frontend
+  'https://www.magicsell.io',
+  'https://magicsell.io',
+];
+
+const ALLOWED_SET = new Set(ALLOWED_LIST);
+
+// express-cors için robust seçenekler
+const corsOpts = {
+  origin(origin, cb) {
+    if (!origin) return cb(null, true); // curl / same-origin
+    try {
+      const { hostname } = new URL(origin);
+      const ok =
+        hostname === 'localhost' ||
+        hostname === 'magicsell.io' ||
+        hostname === 'www.magicsell.io' ||
+        hostname === 'magic-sell-frontend.vercel.app' ||
+        /^magic-sell-frontend-.*\.vercel\.app$/.test(hostname); // preview’leri de kabul et
+      return ok ? cb(null, true) : cb(new Error('CORS blocked: ' + origin));
+    } catch {
+      return cb(new Error('CORS origin parse error'));
+    }
+  },
+  credentials: true,
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
+  maxAge: 86400,
+};
 
 const app = express();
 const server = http.createServer(app);
+// const io = socketIo(server, {
+//   cors: {
+//     origin: ["http://localhost:3000", "http://localhost:3001"],
+//     methods: ["GET", "POST", "PUT", "DELETE"]
+//   }
+// });
 const io = socketIo(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:3001"],
-    methods: ["GET", "POST", "PUT", "DELETE"]
-  }
+    origin: ALLOWED_LIST,       // socket.io array kabul ediyor
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+  // path: '/socket.io',  // default bu; değişikse aynı yolu frontende de ver
 });
 
 // Mapbox token configuration
@@ -39,10 +80,8 @@ app.use((req, res, next) => {
 });
 
 // Middleware
-app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:3001"],
-  credentials: true
-}));
+app.use(cors(corsOpts));
+app.options('*', cors(corsOpts));
 app.use(express.json());
 
 // Database service initialization
@@ -1083,9 +1122,9 @@ io.on('connection', (socket) => {
 });
 
 // Daily Sales API endpoints
-app.get('/api/daily-sales', (req, res) => {
+app.get('/api/daily-sales',async (req, res) => {
   try {
-    const data = loadData();
+    const data =await loadData();
     const dailySales = data.dailySales || [];
     res.json(dailySales);
   } catch (error) {
@@ -1094,10 +1133,10 @@ app.get('/api/daily-sales', (req, res) => {
   }
 });
 
-app.get('/api/daily-sales/:date', (req, res) => {
+app.get('/api/daily-sales/:date',async (req, res) => {
   try {
     const { date } = req.params;
-    const data = loadData();
+    const data =await loadData();
     const dailySales = data.dailySales || [];
     const dailySale = dailySales.find(sale => sale.date === date);
     
@@ -1133,9 +1172,9 @@ app.post('/api/daily-sales', (req, res) => {
 });
 
 // Weekly Sales API endpoints
-app.get('/api/weekly-sales', (req, res) => {
+app.get('/api/weekly-sales',async (req, res) => {
   try {
-    const data = loadData();
+    const data =await loadData();
     const weeklySales = data.weeklySales || [];
     res.json(weeklySales);
   } catch (error) {
@@ -1221,10 +1260,10 @@ app.get('/api/analytics', (req, res) => {
   }
 });
 
-app.get('/api/weekly-sales/:week', (req, res) => {
+app.get('/api/weekly-sales/:week',async (req, res) => {
   try {
     const { week } = req.params;
-    const data = loadData();
+    const data =await loadData();
     const weeklySales = data.weeklySales || [];
     const weeklySale = weeklySales.find(sale => sale.week === week);
     
@@ -1260,10 +1299,10 @@ app.post('/api/weekly-sales', (req, res) => {
 });
 
 // Force recalculation of analytics data
-app.post('/api/recalculate-analytics', (req, res) => {
+app.post('/api/recalculate-analytics',async (req, res) => {
   try {
     console.log('🔄 Force recalculating analytics via API...');
-    const updatedData = forceRecalculateAndSaveAnalytics();
+    const updatedData =await forceRecalculateAndSaveAnalytics();
     
     res.json({
       message: 'Analytics recalculated successfully',
@@ -1369,10 +1408,10 @@ app.post('/api/calculate-weekly-sales/:week', (req, res) => {
 });
 
 // Sales Prediction API endpoints
-app.get('/api/predictions', (req, res) => {
+app.get('/api/predictions',async (req, res) => {
   try {
     const { type, timeframe } = req.query;
-    const data = loadData();
+    const data =await loadData();
     const predictions = data.predictions || [];
     res.json(predictions);
   } catch (error) {
@@ -1485,10 +1524,10 @@ const calculateAdvancedPredictions = (historicalData, type, timeframe) => {
 };
 
 // Sales Report API endpoints
-app.get('/api/reports', (req, res) => {
+app.get('/api/reports',async (req, res) => {
   try {
     const { type, timeRange } = req.query;
-    const data = loadData();
+    const data =await loadData();
     const reports = data.reports || [];
     res.json(reports);
   } catch (error) {
@@ -1676,9 +1715,9 @@ const exportReport = (reportData, format) => {
 };
 
 // Notification API endpoints
-app.get('/api/notifications', (req, res) => {
+app.get('/api/notifications',async (req, res) => {
   try {
-    const data = loadData();
+    const data =await loadData();
     const notifications = data.notifications || [];
     res.json(notifications);
   } catch (error) {

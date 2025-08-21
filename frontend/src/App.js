@@ -419,32 +419,16 @@ function App() {
       console.log("🔄 Fetching orders from:", getApiUrl());
       // Cache-busting için timestamp ekle
       const timestamp = new Date().getTime();
-      const response = await fetch(`${getApiUrl()}/api/orders?t=${timestamp}`, {
-        method: "GET",
-        headers: {
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          Pragma: "no-cache",
-          Expires: "0",
-        },
+      const response = await fetch(`${getApiUrl()}/api/orders`, {
       });
       console.log("📥 Orders response status:", response.status);
 
-      if (response.ok) {
+   
         const data = await response.json();
-        console.log("📋 Fetched orders:", data);
-        console.log(
-          "📅 Orders with dates:",
-          data.map((order) => ({
-            id: order.id,
-            basketNo: order.basketNo,
-            createdAt: order.createdAt,
-            deliveredAt: order.deliveredAt,
-          }))
-        );
-        setOrders(data);
-      } else {
-        console.error("❌ Failed to fetch orders:", response.status);
-      }
+        console.log(`dataaaa`,data)
+      
+        setOrders(data.filteredOrders);
+    
     } catch (error) {
       console.error("❌ Error fetching orders:", error);
     }

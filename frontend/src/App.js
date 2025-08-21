@@ -175,36 +175,45 @@ function App() {
     });
   };
 
-  // Helper function to get API URL
-  const getApiUrl = () => {
-    // For iPhone testing, use computer's IP address
-    const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isLocalhost =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
-
-    if (process.env.NODE_ENV === "production") {
-      return "/api";
-    } else if (isIPhone && !isLocalhost) {
-      // iPhone accessing via IP address
-      const currentHost = window.location.hostname;
-      return `http://${currentHost}:5001`;
-    } else {
-      return "http://localhost:5001";
-    }
-  };
-
-  // Helper: API base URL
+  // // Helper function to get API URL
   // const getApiUrl = () => {
-  //   const fromEnv = process.env.REACT_APP_API_BASE; // örn: http://localhost:5001 veya https://backend.domain.com
-  //   if (fromEnv) return fromEnv;
+  //   // For iPhone testing, use computer's IP address
+  //   const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  //   const isLocalhost =
+  //     window.location.hostname === "localhost" ||
+  //     window.location.hostname === "127.0.0.1";
 
-  //   // env yoksa: prod'da same-origin /api; dev'de local backend
-  //   if (process.env.NODE_ENV === 'production') {
-  //     return '/api';
+  //   if (process.env.NODE_ENV === "production") {
+  //     return "/api";
+  //   } else if (isIPhone && !isLocalhost) {
+  //     // iPhone accessing via IP address
+  //     const currentHost = window.location.hostname;
+  //     return `http://${currentHost}:5001`;
+  //   } else {
+  //     return "http://localhost:5001";
   //   }
-  //   return 'http://localhost:5001';
   // };
+
+  const API_BASE = (process.env.REACT_APP_API_URL || "").replace(/\/$/, "");
+
+  const getApiUrl = () => {
+    // Prod/Preview’da ayrı backend kullanacaksan ENV ZORUNLU
+    if (API_BASE) return API_BASE; // örn: https://magicsell-backend.onrender.com
+
+    // Lokal geliştirme
+    const host = window.location.hostname;
+    const isLocal = host === "localhost" || host === "127.0.0.1";
+    if (isLocal) return "http://localhost:5001"; // backend lokalde
+
+    // Prod’da ENV yoksa (yanlış kurulum) uyarı ver, aynı origin’e düş (proxy kuruluysa çalışır)
+    if (process.env.NODE_ENV === "production") {
+      console.warn("REACT_APP_API_URL set edilmemiş; same-origin fallback.");
+      return "";
+    }
+
+    // Telefonla LAN IP üzerinden test için
+    return `http://${host}:5001`;
+  };
 
   // Filter functions
   const handleFiltersChange = async (filters) => {
@@ -1300,9 +1309,15 @@ function App() {
                       <Typography variant="h6" sx={{ mb: 2 }}>
                         📍 Orders to Deliver
                       </Typography>
-                     <Typography variant="body1">
-  {`${orders.filter(o => o.status === 'Pending' || o.status === 'In Progress').length} orders to deliver`}
-</Typography>
+                      <Typography variant="body1">
+                        {`${
+                          orders.filter(
+                            (o) =>
+                              o.status === "Pending" ||
+                              o.status === "In Progress"
+                          ).length
+                        } orders to deliver`}
+                      </Typography>
                       <Button
                         variant="contained"
                         sx={{
@@ -1335,9 +1350,15 @@ function App() {
                       <Typography variant="h6" sx={{ mb: 2 }}>
                         📦 Orders to Deliver
                       </Typography>
-                     <Typography variant="h4" sx={{ mb: 1 }}>
-  {orders.filter(o => o.status === 'Pending' || o.status === 'In Progress').length}
-</Typography>
+                      <Typography variant="h4" sx={{ mb: 1 }}>
+                        {
+                          orders.filter(
+                            (o) =>
+                              o.status === "Pending" ||
+                              o.status === "In Progress"
+                          ).length
+                        }
+                      </Typography>
                       <Button
                         variant="contained"
                         sx={{

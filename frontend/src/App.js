@@ -103,6 +103,18 @@ function App() {
     return savedLoginState ? JSON.parse(savedLoginState) : false;
   });
 
+  const toOrderArray = (data) => {
+  const arr = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.orders)
+    ? data.orders
+    : Array.isArray(data?.filteredOrders)
+    ? data.filteredOrders
+    : [];
+
+  return arr.map(o => ({ ...o, id: o.id ?? o._id ?? o.basketNo }));
+};
+
   // Debug optimized route changes
   useEffect(() => {
     console.log("🔄 Optimized route changed:", optimizedRoute.length, "orders");
@@ -217,28 +229,25 @@ function App() {
 
   // Filter functions
   const handleFiltersChange = async (filters) => {
-    try {
-      const params = new URLSearchParams();
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== "") {
-          params.append(key, value);
-        }
-      });
+  try {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([k, v]) => {
+      if (v !== "" && v != null) params.append(k, v);
+    });
 
-      const url = `${getApiUrl()}/api/orders?${params.toString()}`;
-      const response = await fetch(url);
+    const res = await fetch(`${getApiUrl()}/api/orders?${params.toString()}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const list = toOrderArray(json);
 
-      if (response.ok) {
-        const filteredData = await response.json();
-        setFilteredOrders(filteredData);
-        setIsFiltered(true);
-      } else {
-        console.error("Filter request failed:", response.status);
-      }
-    } catch (error) {
-      console.error("Error applying filters:", error);
-    }
-  };
+    setFilteredOrders(list);
+    setIsFiltered(true);
+  } catch (e) {
+    console.error("Error applying filters:", e);
+    setFilteredOrders([]);
+    setIsFiltered(false);
+  }
+};
 
   const handleClearFilters = () => {
     setFilteredOrders([]);
@@ -414,25 +423,20 @@ function App() {
     }
   }, []);
 
-  const fetchOrders = async () => {
-    try {
-      console.log("🔄 Fetching orders from:", getApiUrl());
-      // Cache-busting için timestamp ekle
-      const timestamp = new Date().getTime();
-      const response = await fetch(`${getApiUrl()}/api/orders`, {
-      });
-      console.log("📥 Orders response status:", response.status);
 
-   
-        const data = await response.json();
-        console.log(`dataaaa`,data)
-      
-        setOrders(data.filteredOrders);
-    
-    } catch (error) {
-      console.error("❌ Error fetching orders:", error);
-    }
-  };
+  const fetchOrders = async () => {
+  try {
+    const res = await fetch(`${getApiUrl()}/api/orders?t=${Date.now()}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const list = toOrderArray(json);
+    console.log('✅ orders loaded:', list.length);
+    setOrders(list);
+  } catch (err) {
+    console.error('❌ Error fetching orders:', err);
+    setOrders([]); // UI patlamasın
+  }
+};
 
   const fetchCustomers = async (page = 1, limit = 1000) => {
     try {
@@ -1030,7 +1034,7 @@ function App() {
             return 0;
           });
 
-          setOrders(sortedOrders);
+          // setOrders(sortedOrders);
           console.log("🔄 Setting optimized route:", result.route);
           setOptimizedRoute(result.route);
 
@@ -1927,7 +1931,7 @@ function App() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {((isFiltered ? filteredOrders : orders)??[])
+                            {toOrderArray(isFiltered ? filteredOrders : orders)
                               .filter((order) => {
                                 // Driver için sadece Pending ve In Progress siparişleri göster
                                 if (currentUser?.type === "driver") {

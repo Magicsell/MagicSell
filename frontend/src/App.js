@@ -175,23 +175,25 @@ function App() {
     });
   };
 
-  // Helper function to get API URL
-  const getApiUrl = () => {
-    // For iPhone testing, use computer's IP address
-    const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isLocalhost =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
+  // Use the new comprehensive analytics API
+  const API_BASE = (process.env.REACT_APP_API_URL || "").replace(/\/$/, "");
 
-    if (process.env.NODE_ENV === "production") {
-      return "/api";
-    } else if (isIPhone && !isLocalhost) {
-      // iPhone accessing via IP address
-      const currentHost = window.location.hostname;
-      return `http://${currentHost}:5001`;
-    } else {
+  const getApiUrl = () => {
+    // 1) Prod/Preview’de Vercel env’den gelsin (önerilen yol)
+    if (API_BASE) return API_BASE;
+
+    // 2) Lokal geliştirme
+    const host = window.location.hostname;
+    const isLocalhost = host === "localhost" || host === "127.0.0.1";
+
+    if (isLocalhost) {
+      // backend lokalde 5001 ise
       return "http://localhost:5001";
     }
+
+    // 3) Telefonla LAN IP’den açıyorsan (ör. 192.168.x.x)
+    // backend’i de aynı makinada 5001’de dinliyorsan:
+    return `http://${host}:5001`;
   };
 
   // Helper: API base URL
@@ -1300,9 +1302,15 @@ function App() {
                       <Typography variant="h6" sx={{ mb: 2 }}>
                         📍 Orders to Deliver
                       </Typography>
-                     <Typography variant="body1">
-  {`${orders.filter(o => o.status === 'Pending' || o.status === 'In Progress').length} orders to deliver`}
-</Typography>
+                      <Typography variant="body1">
+                        {`${
+                          orders.filter(
+                            (o) =>
+                              o.status === "Pending" ||
+                              o.status === "In Progress"
+                          ).length
+                        } orders to deliver`}
+                      </Typography>
                       <Button
                         variant="contained"
                         sx={{
@@ -1335,9 +1343,15 @@ function App() {
                       <Typography variant="h6" sx={{ mb: 2 }}>
                         📦 Orders to Deliver
                       </Typography>
-                     <Typography variant="h4" sx={{ mb: 1 }}>
-  {orders.filter(o => o.status === 'Pending' || o.status === 'In Progress').length}
-</Typography>
+                      <Typography variant="h4" sx={{ mb: 1 }}>
+                        {
+                          orders.filter(
+                            (o) =>
+                              o.status === "Pending" ||
+                              o.status === "In Progress"
+                          ).length
+                        }
+                      </Typography>
                       <Button
                         variant="contained"
                         sx={{

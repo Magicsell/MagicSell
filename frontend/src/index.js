@@ -87,5 +87,10 @@ serviceWorker.register({
   }
 });
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations()
+    .then(rs => rs.forEach(r => r.unregister()));
+}
+
 // Request notification permission for delivery updates
 serviceWorker.requestNotificationPermission();

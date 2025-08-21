@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Paper,
@@ -15,8 +15,8 @@ import {
   Chip,
   IconButton,
   Tooltip,
-  LinearProgress
-} from '@mui/material';
+  LinearProgress,
+} from "@mui/material";
 import {
   TrendingUp,
   ShoppingCart,
@@ -27,8 +27,8 @@ import {
   Assessment,
   Analytics,
   Today,
-  Home
-} from '@mui/icons-material';
+  Home,
+} from "@mui/icons-material";
 
 const ComprehensiveAnalytics = () => {
   const [analyticsData, setAnalyticsData] = useState(null);
@@ -39,58 +39,81 @@ const ComprehensiveAnalytics = () => {
   }, []);
 
   useEffect(() => {
-  // 1) Global event ile tetikleme (biz yayınlayacağız)
-  const refresh = () => fetchAnalyticsData();
-  window.addEventListener('orders:changed', refresh);
+    // 1) Global event ile tetikleme (biz yayınlayacağız)
+    const refresh = () => fetchAnalyticsData();
+    window.addEventListener("orders:changed", refresh);
 
-  // 2) Socket.io’dan tetikleme (driver delivered vb. durumlar)
-  const s = window.__socket; // uygulamada merkezi socket varsa
-  if (s && s.on) {
-    s.on('order-updated', refresh);
-  }
+    // 2) Socket.io’dan tetikleme (driver delivered vb. durumlar)
+    const s = window.__socket; // uygulamada merkezi socket varsa
+    if (s && s.on) {
+      s.on("order-updated", refresh);
+    }
 
-  return () => {
-    window.removeEventListener('orders:changed', refresh);
-    if (s && s.off) s.off('order-updated', refresh);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("orders:changed", refresh);
+      if (s && s.off) s.off("order-updated", refresh);
+    };
+  }, []);
 
   const fetchAnalyticsData = async () => {
     try {
-      console.log('📊 Fetching comprehensive analytics...');
-      
+      console.log("📊 Fetching comprehensive analytics...");
+
       // Use the new comprehensive analytics API
+      // const getApiUrl = () => {
+      //         // For local development
+      // const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      // const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+      // if (isIPhone && !isLocalhost) {
+      //   // iPhone accessing via IP address
+      //   const currentHost = window.location.hostname;
+      //   return `http://${currentHost}:5000`;
+      // } else {
+      //         return process.env.NODE_ENV === 'production'
+      //   ? '/api'
+      //   : 'http://localhost:5001';
+      // }
+      // };
+
+      const API_BASE = (process.env.REACT_APP_API_URL || "").replace(/\/$/, "");
+
       const getApiUrl = () => {
-              // For local development
-      const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      
-      if (isIPhone && !isLocalhost) {
-        // iPhone accessing via IP address
-        const currentHost = window.location.hostname;
-        return `http://${currentHost}:5000`;
-      } else {
-              return process.env.NODE_ENV === 'production' 
-        ? '/api'
-        : 'http://localhost:5001';
-      }
+        // Prod/Preview’da ayrı backend kullanacaksan ENV ZORUNLU
+        if (API_BASE) return API_BASE; // örn: https://magicsell-backend.onrender.com
+
+        // Lokal geliştirme
+        const host = window.location.hostname;
+        const isLocal = host === "localhost" || host === "127.0.0.1";
+        if (isLocal) return "http://localhost:5001"; // backend lokalde
+
+        // Prod’da ENV yoksa (yanlış kurulum) uyarı ver, aynı origin’e düş (proxy kuruluysa çalışır)
+        if (process.env.NODE_ENV === "production") {
+          console.warn(
+            "REACT_APP_API_URL set edilmemiş; same-origin fallback."
+          );
+          return "";
+        }
+
+        // Telefonla LAN IP üzerinden test için
+        return `http://${host}:5001`;
       };
-      
+
       const response = await fetch(`${getApiUrl()}/api/analytics`);
       const data = await response.json();
 
-      console.log('📊 Comprehensive analytics received:', data);
+      console.log("📊 Comprehensive analytics received:", data);
       setAnalyticsData(data);
       setLoading(false);
     } catch (error) {
-      console.error('❌ Error fetching analytics data:', error);
+      console.error("❌ Error fetching analytics data:", error);
       setLoading(false);
     }
   };
 
   if (loading) {
     return (
-      <Box sx={{ width: '100%', mt: 2 }}>
+      <Box sx={{ width: "100%", mt: 2 }}>
         <LinearProgress />
       </Box>
     );
@@ -98,7 +121,7 @@ const ComprehensiveAnalytics = () => {
 
   if (!analyticsData) {
     return (
-      <Paper sx={{ p: 3, textAlign: 'center' }}>
+      <Paper sx={{ p: 3, textAlign: "center" }}>
         <Typography variant="h6" color="text.secondary">
           Analytics data not available
         </Typography>
@@ -116,12 +139,12 @@ const ComprehensiveAnalytics = () => {
     todaysOrders = 0,
     topShops = [],
     dailySales = [],
-    weeklySales = []
+    weeklySales = [],
   } = analyticsData;
 
   // Get today's data
-  const today = new Date().toISOString().split('T')[0];
-  const todayData = dailySales.find(sale => sale.date === today) || {};
+  const today = new Date().toISOString().split("T")[0];
+  const todayData = dailySales.find((sale) => sale.date === today) || {};
   const todaysRevenue = todayData.totalRevenue || 0;
 
   // Get latest weekly data
@@ -131,19 +154,21 @@ const ComprehensiveAnalytics = () => {
   const paymentBreakdown = latestWeekly.paymentBreakdown || {};
   const balanceAmount = paymentBreakdown.Balance || 0;
   const cashAmount = paymentBreakdown.Cash || 0;
-  const balancePercentage = totalRevenue > 0 ? ((balanceAmount / totalRevenue) * 100).toFixed(1) : 0;
-  const cashPercentage = totalRevenue > 0 ? ((cashAmount / totalRevenue) * 100).toFixed(1) : 0;
+  const balancePercentage =
+    totalRevenue > 0 ? ((balanceAmount / totalRevenue) * 100).toFixed(1) : 0;
+  const cashPercentage =
+    totalRevenue > 0 ? ((cashAmount / totalRevenue) * 100).toFixed(1) : 0;
 
   // Get top shop info
-  const topShop = topShops.length > 0 ? topShops[0].shop : 'N/A';
+  const topShop = topShops.length > 0 ? topShops[0].shop : "N/A";
   const topShopRevenue = topShops.length > 0 ? topShops[0].revenue : 0;
   const topShopOrders = topShops.length > 0 ? topShops[0].count : 0;
 
   return (
     <Box sx={{ mt: 3 }}>
       <Paper sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <Analytics sx={{ mr: 1, color: 'primary.main' }} />
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+          <Analytics sx={{ mr: 1, color: "primary.main" }} />
           <Typography variant="h5" component="h2">
             Comprehensive Analytics Dashboard
           </Typography>
@@ -152,28 +177,34 @@ const ComprehensiveAnalytics = () => {
         {/* Key Metrics Cards */}
         <Grid container spacing={3} sx={{ mb: 3 }}>
           <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <Card sx={{ 
-              background: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              height: '140px',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <Box sx={{ 
-                    mr: 1,
-                    fontSize: '1.2rem',
-                    fontWeight: 'bold'
-                  }}>
+            <Card
+              sx={{
+                background: "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                height: "140px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <CardContent
+                sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Box
+                    sx={{
+                      mr: 1,
+                      fontSize: "1.2rem",
+                      fontWeight: "bold",
+                    }}
+                  >
                     £
                   </Box>
                   <Typography variant="h6">Total Revenue</Typography>
                 </Box>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+                <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
                   £{totalRevenue.toFixed(2)}
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, mt: 'auto' }}>
+                <Typography variant="body2" sx={{ opacity: 0.8, mt: "auto" }}>
                   {totalOrders} orders delivered
                 </Typography>
               </CardContent>
@@ -181,28 +212,34 @@ const ComprehensiveAnalytics = () => {
           </Grid>
 
           <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <Card sx={{ 
-              background: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              height: '140px',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <Box sx={{ 
-                    mr: 1,
-                    fontSize: '1.2rem',
-                    fontWeight: 'bold'
-                  }}>
+            <Card
+              sx={{
+                background: "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                height: "140px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <CardContent
+                sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Box
+                    sx={{
+                      mr: 1,
+                      fontSize: "1.2rem",
+                      fontWeight: "bold",
+                    }}
+                  >
                     £
                   </Box>
                   <Typography variant="h6">💰 Today's Revenue</Typography>
                 </Box>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+                <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
                   £{todaysRevenue.toFixed(2)}
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, mt: 'auto' }}>
+                <Typography variant="body2" sx={{ opacity: 0.8, mt: "auto" }}>
                   Revenue for {today}
                 </Typography>
               </CardContent>
@@ -210,22 +247,26 @@ const ComprehensiveAnalytics = () => {
           </Grid>
 
           <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <Card sx={{ 
-              background: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              height: '140px',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <Card
+              sx={{
+                background: "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                height: "140px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <CardContent
+                sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
                   <ShoppingCart sx={{ mr: 1 }} />
                   <Typography variant="h6">🛒 Total Orders</Typography>
                 </Box>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+                <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
                   {totalOrders}
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, mt: 'auto' }}>
+                <Typography variant="body2" sx={{ opacity: 0.8, mt: "auto" }}>
                   {deliveredOrders} delivered, {pendingOrders} pending
                 </Typography>
               </CardContent>
@@ -233,22 +274,26 @@ const ComprehensiveAnalytics = () => {
           </Grid>
 
           <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <Card sx={{ 
-              background: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              height: '140px',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <Card
+              sx={{
+                background: "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                height: "140px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <CardContent
+                sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
                   <Today sx={{ mr: 1 }} />
                   <Typography variant="h6">📅 Today's Orders</Typography>
                 </Box>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+                <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
                   {todaysOrders}
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, mt: 'auto' }}>
+                <Typography variant="body2" sx={{ opacity: 0.8, mt: "auto" }}>
                   Orders for {today}
                 </Typography>
               </CardContent>
@@ -256,22 +301,26 @@ const ComprehensiveAnalytics = () => {
           </Grid>
 
           <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <Card sx={{ 
-              background: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              height: '140px',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <Card
+              sx={{
+                background: "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                height: "140px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <CardContent
+                sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
                   <TrendingUp sx={{ mr: 1 }} />
                   <Typography variant="h6">📈 Avg Order Value</Typography>
                 </Box>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+                <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
                   £{averageOrderValue.toFixed(2)}
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, mt: 'auto' }}>
+                <Typography variant="body2" sx={{ opacity: 0.8, mt: "auto" }}>
                   Per order average
                 </Typography>
               </CardContent>
@@ -279,22 +328,26 @@ const ComprehensiveAnalytics = () => {
           </Grid>
 
           <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <Card sx={{ 
-              background: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              height: '140px',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <Card
+              sx={{
+                background: "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                height: "140px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <CardContent
+                sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
                   <Home sx={{ mr: 1 }} />
                   <Typography variant="h6">🏠 Top Shop</Typography>
                 </Box>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+                <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
                   {topShop}
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, mt: 'auto' }}>
+                <Typography variant="body2" sx={{ opacity: 0.8, mt: "auto" }}>
                   £{topShopRevenue.toFixed(2)} revenue ({topShopOrders} orders)
                 </Typography>
               </CardContent>
@@ -306,25 +359,37 @@ const ComprehensiveAnalytics = () => {
         <TableContainer component={Paper} sx={{ mt: 3 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'primary.main' }}>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Metric</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Daily</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Weekly</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Prediction (Tomorrow)</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Status</TableCell>
+              <TableRow sx={{ backgroundColor: "primary.main" }}>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                  Metric
+                </TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                  Daily
+                </TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                  Weekly
+                </TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                  Prediction (Tomorrow)
+                </TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                  Status
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {/* Revenue Row */}
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Box sx={{ 
-                      mr: 1, 
-                      color: 'primary.main',
-                      fontSize: '1.2rem',
-                      fontWeight: 'bold'
-                    }}>
+                <TableCell sx={{ fontWeight: "bold" }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{
+                        mr: 1,
+                        color: "primary.main",
+                        fontSize: "1.2rem",
+                        fontWeight: "bold",
+                      }}
+                    >
                       £
                     </Box>
                     Revenue
@@ -332,21 +397,19 @@ const ComprehensiveAnalytics = () => {
                 </TableCell>
                 <TableCell>£{todaysRevenue.toFixed(2)}</TableCell>
                 <TableCell>£{totalRevenue.toFixed(2)}</TableCell>
-                <TableCell>£{(latestWeekly.totalRevenue || 0).toFixed(2)}</TableCell>
                 <TableCell>
-                  <Chip 
-                    label="Excellent" 
-                    color="success" 
-                    size="small"
-                  />
+                  £{(latestWeekly.totalRevenue || 0).toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  <Chip label="Excellent" color="success" size="small" />
                 </TableCell>
               </TableRow>
 
               {/* Orders Row */}
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <ShoppingCart sx={{ mr: 1, color: 'primary.main' }} />
+                <TableCell sx={{ fontWeight: "bold" }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <ShoppingCart sx={{ mr: 1, color: "primary.main" }} />
                     🛒 Orders
                   </Box>
                 </TableCell>
@@ -354,73 +417,82 @@ const ComprehensiveAnalytics = () => {
                 <TableCell>{totalOrders}</TableCell>
                 <TableCell>{latestWeekly.totalOrders || 0}</TableCell>
                 <TableCell>
-                  <Chip 
-                    label="On Track" 
-                    color="primary" 
-                    size="small"
-                  />
+                  <Chip label="On Track" color="primary" size="small" />
                 </TableCell>
               </TableRow>
 
               {/* Average Order Value Row */}
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <TrendingUp sx={{ mr: 1, color: 'primary.main' }} />
+                <TableCell sx={{ fontWeight: "bold" }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <TrendingUp sx={{ mr: 1, color: "primary.main" }} />
                     📈 Avg Order Value
                   </Box>
                 </TableCell>
-                <TableCell>£{(todaysRevenue / todaysOrders || 0).toFixed(2)}</TableCell>
-                <TableCell>£{averageOrderValue.toFixed(2)}</TableCell>
-                <TableCell>£{(latestWeekly.averageOrderValue || 0).toFixed(2)}</TableCell>
                 <TableCell>
-                  <Chip 
-                    label="Good" 
-                    color="warning" 
-                    size="small"
-                  />
+                  £{(todaysRevenue / todaysOrders || 0).toFixed(2)}
+                </TableCell>
+                <TableCell>£{averageOrderValue.toFixed(2)}</TableCell>
+                <TableCell>
+                  £{(latestWeekly.averageOrderValue || 0).toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  <Chip label="Good" color="warning" size="small" />
                 </TableCell>
               </TableRow>
 
               {/* Payment Methods Row */}
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Payment sx={{ mr: 1, color: 'primary.main' }} />
+                <TableCell sx={{ fontWeight: "bold" }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Payment sx={{ mr: 1, color: "primary.main" }} />
                     💳 Payment Methods
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box>
-                    <Typography variant="body2">Balance: £{balanceAmount.toFixed(2)} ({balancePercentage}%)</Typography>
-                    <Typography variant="body2">Cash: £{cashAmount.toFixed(2)} ({cashPercentage}%)</Typography>
-                    <Typography variant="body2">Card: £{(paymentBreakdown.Card || 0).toFixed(2)}</Typography>
-                    <Typography variant="body2">Bank Transfer: £{(paymentBreakdown.Bank || 0).toFixed(2)}</Typography>
+                    <Typography variant="body2">
+                      Balance: £{balanceAmount.toFixed(2)} ({balancePercentage}
+                      %)
+                    </Typography>
+                    <Typography variant="body2">
+                      Cash: £{cashAmount.toFixed(2)} ({cashPercentage}%)
+                    </Typography>
+                    <Typography variant="body2">
+                      Card: £{(paymentBreakdown.Card || 0).toFixed(2)}
+                    </Typography>
+                    <Typography variant="body2">
+                      Bank Transfer: £{(paymentBreakdown.Bank || 0).toFixed(2)}
+                    </Typography>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box>
-                    <Typography variant="body2">Balance: £{balanceAmount.toFixed(2)}</Typography>
-                    <Typography variant="body2">Cash: £{cashAmount.toFixed(2)}</Typography>
-                    <Typography variant="body2">Card: £{(paymentBreakdown.Card || 0).toFixed(2)}</Typography>
-                    <Typography variant="body2">Bank Transfer: £{(paymentBreakdown.Bank || 0).toFixed(2)}</Typography>
+                    <Typography variant="body2">
+                      Balance: £{balanceAmount.toFixed(2)}
+                    </Typography>
+                    <Typography variant="body2">
+                      Cash: £{cashAmount.toFixed(2)}
+                    </Typography>
+                    <Typography variant="body2">
+                      Card: £{(paymentBreakdown.Card || 0).toFixed(2)}
+                    </Typography>
+                    <Typography variant="body2">
+                      Bank Transfer: £{(paymentBreakdown.Bank || 0).toFixed(2)}
+                    </Typography>
                   </Box>
                 </TableCell>
                 <TableCell>-</TableCell>
                 <TableCell>
-                  <Chip 
-                    label="Balanced" 
-                    color="info" 
-                    size="small"
-                  />
+                  <Chip label="Balanced" color="info" size="small" />
                 </TableCell>
               </TableRow>
 
               {/* Confidence Level Row */}
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Assessment sx={{ mr: 1, color: 'primary.main' }} />
+                <TableCell sx={{ fontWeight: "bold" }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Assessment sx={{ mr: 1, color: "primary.main" }} />
                     📊 Prediction Confidence
                   </Box>
                 </TableCell>
@@ -428,11 +500,7 @@ const ComprehensiveAnalytics = () => {
                 <TableCell>-</TableCell>
                 <TableCell>85%</TableCell>
                 <TableCell>
-                  <Chip 
-                    label="High" 
-                    color="success" 
-                    size="small"
-                  />
+                  <Chip label="High" color="success" size="small" />
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -560,4 +628,4 @@ const ComprehensiveAnalytics = () => {
   );
 };
 
-export default ComprehensiveAnalytics; 
+export default ComprehensiveAnalytics;

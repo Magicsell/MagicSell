@@ -24,23 +24,25 @@ const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 // Real Mapbox token for MagicSell
 const REAL_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
-// Helper function to get API URL
-const getApiUrl = () => {
-  // For local development
-  const isIPhone = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isLocalhost =
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1";
+// Use the new comprehensive analytics API
+const API_BASE = (process.env.REACT_APP_API_URL || "").replace(/\/$/, "");
 
-  if (isIPhone && !isLocalhost) {
-    // iPhone accessing via IP address
-    const currentHost = window.location.hostname;
-    return `http://${currentHost}:5000`;
-  } else {
-    return process.env.NODE_ENV === "production"
-      ? "/api"
-      : "http://localhost:5001";
+const getApiUrl = () => {
+  // 1) Prod/Preview’de Vercel env’den gelsin (önerilen yol)
+  if (API_BASE) return API_BASE;
+
+  // 2) Lokal geliştirme
+  const host = window.location.hostname;
+  const isLocalhost = host === "localhost" || host === "127.0.0.1";
+
+  if (isLocalhost) {
+    // backend lokalde 5001 ise
+    return "http://localhost:5001";
   }
+
+  // 3) Telefonla LAN IP’den açıyorsan (ör. 192.168.x.x)
+  // backend’i de aynı makinada 5001’de dinliyorsan:
+  return `http://${host}:5001`;
 };
 
 const MapComponent = ({ orders, optimizedRoute, onRouteOptimized }) => {
@@ -473,7 +475,7 @@ const MapComponent = ({ orders, optimizedRoute, onRouteOptimized }) => {
     if (coordinates.length > 1) {
       setTimeout(async () => {
         await drawRouteLines(coordinates);
-        await calculateRouteStats(coordinates,ordersToDisplay.length);
+        await calculateRouteStats(coordinates, ordersToDisplay.length);
       }, 200);
     }
 

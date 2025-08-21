@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import * as serviceWorker from './sw-disabled';
+// import * as serviceWorker from './sw-disabled';
 
 // Modern forced-colors support - replacing -ms-high-contrast
 const style = document.createElement('style');
@@ -75,22 +75,22 @@ root.render(
 reportWebVitals();
 
 // Register service worker for PWA functionality
-serviceWorker.register({
-  onSuccess: () => {
-    console.log('MagicSell Driver App is now available offline!');
-  },
-  onUpdate: (registration) => {
-    console.log('New version available!');
-    if (window.confirm('New version available! Reload to update?')) {
-      window.location.reload();
-    }
-  }
-});
+// serviceWorker.register({
+//   onSuccess: () => {
+//     console.log('MagicSell Driver App is now available offline!');
+//   },
+//   onUpdate: (registration) => {
+//     console.log('New version available!');
+//     if (window.confirm('New version available! Reload to update?')) {
+//       window.location.reload();
+//     }
+//   }
+// });
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations()
-    .then(rs => rs.forEach(r => r.unregister()));
-}
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker.getRegistrations()
+//     .then(rs => rs.forEach(r => r.unregister()));
+// }
 
-// Request notification permission for delivery updates
-serviceWorker.requestNotificationPermission();
+// // Request notification permission for delivery updates
+// serviceWorker.requestNotificationPermission();
